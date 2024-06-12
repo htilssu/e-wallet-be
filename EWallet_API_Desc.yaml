@@ -1,0 +1,25 @@
+openapi: 3.0.3
+info:
+  title: EWallet API Description
+  description: Đây là API mô tả cho dự án EWallet
+  version: 1.0.0
+
+servers:
+  - url: 'https://localhost:8080/api/{version}'
+    variables:
+      version:
+        default: 'v1'
+        description: 'API version'
+paths:
+  /auth/login:
+    get:
+      tags:
+        - auth
+      description: endpoint dùng để đăng nhập vào hệ thống
+      responses:
+        200:
+          description: Đăng nhập thành công
+          content:
+            application/json:
+              example: 
+  
