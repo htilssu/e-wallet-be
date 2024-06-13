@@ -2,6 +2,7 @@ HELP.md
 .gradle
 .fastRequest
 build/
+**/env.*
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
