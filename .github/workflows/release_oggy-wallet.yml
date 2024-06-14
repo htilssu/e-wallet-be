@@ -17,7 +17,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    environment: development
+    environment: Production
 
     steps:
       - uses: actions/checkout@v4
@@ -30,7 +30,7 @@ jobs:
 
       - name: setup secret
         run: |
-          curl -sSL '${{secrets.SECRET_FILE}}' -o src/main/resources/env.properties
+          curl -sSL '${{secrets.DB}}' -o ${{github.workspace}}/src/main/resources/env.properties
 
       - name: Build with Gradle Wrapper
         run: |

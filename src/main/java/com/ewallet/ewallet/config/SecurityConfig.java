@@ -10,13 +10,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 public class SecurityConfig {
 
-  @Bean
-  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    http.authorizeHttpRequests(
-        authRes -> authRes.requestMatchers("/(auth)").permitAll().anyRequest().authenticated());
-
-    http.addFilterBefore(new TokenFilter(), UsernamePasswordAuthenticationFilter.class);
-
-    return http.build();
-  }
+        @Bean
+        public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+            http.authorizeHttpRequests(rq -> {
+              rq.anyRequest().permitAll();
+            });
+            return http.build();
+        }
 }
