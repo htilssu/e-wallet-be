@@ -28,14 +28,17 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-websocket")
     implementation("org.springframework.boot:spring-boot-configuration-processor")
-    implementation("com.auth0:java-jwt:2.0.1")
     implementation("org.springframework.cloud:spring-cloud-function-context")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
-    implementation("org.springframework.boot:spring-boot-starter-graphql")
+    implementation("org.springframework.boot:spring-boot-starter-mail")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
+
+    //jwt
+    implementation("io.jsonwebtoken:jjwt:0.12.6")
+
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
-    testImplementation("org.springframework.graphql:spring-graphql-test")
     testImplementation("io.projectreactor:reactor-test")
 
     runtimeOnly("com.microsoft.sqlserver:mssql-jdbc")
