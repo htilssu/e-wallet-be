@@ -6,6 +6,6 @@ public class TokenFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) {
-
+        // Do something
     }
 }
