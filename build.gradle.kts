@@ -35,11 +35,13 @@ dependencies {
 
     //jwt
     implementation("io.jsonwebtoken:jjwt:0.12.6")
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
 
+    //one time password
+    implementation("com.github.bastiaanjansen:otp-java:2.0.3")
+    //twilio
+    implementation("com.twilio.sdk:twilio:10.4.0")
 
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.springframework.security:spring-security-test")
-    testImplementation("io.projectreactor:reactor-test")
 
     runtimeOnly("com.microsoft.sqlserver:mssql-jdbc")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
@@ -48,6 +50,9 @@ dependencies {
     compileOnly("org.projectlombok:lombok")
 
     annotationProcessor("org.projectlombok:lombok")
+    testImplementation("io.projectreactor:reactor-test")
+    testImplementation("org.springframework.security:spring-security-test")
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 dependencyManagement {
     imports {
@@ -57,5 +62,9 @@ dependencyManagement {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+tasks.compileJava { //encode UTF-8
+    options.encoding = "UTF-8"
 }
 
