@@ -1,0 +1,14 @@
+package com.ewallet.ewallet.otp;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@AllArgsConstructor
+@Getter
+public class OTPData {
+
+    private String otpType;
+    private String phoneNumber;
+    private String email;
+
+}
