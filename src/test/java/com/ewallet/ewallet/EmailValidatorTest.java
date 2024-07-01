@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+
+@DisplayName("Email Validator Test")
 public class EmailValidatorTest {
 
     @Test
