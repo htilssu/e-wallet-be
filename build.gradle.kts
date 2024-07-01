@@ -32,11 +32,11 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.springframework.boot:spring-boot-starter-mail")
     implementation("org.springframework.boot:spring-boot-starter-validation")
-
-    //jwt
-    implementation("io.jsonwebtoken:jjwt:0.12.6")
+    implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
 
+    //jwt
+    //    implementation("io.jsonwebtoken:jjwt:0.12.6")
     //one time password
     implementation("com.github.bastiaanjansen:otp-java:2.0.3")
     //twilio
