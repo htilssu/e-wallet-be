@@ -1,5 +1,6 @@
 package com.ewallet.ewallet.service;
 
+
 import com.ewallet.ewallet.otp.OTPSender;
 import com.twilio.Twilio;
 import com.twilio.rest.verify.v2.service.Verification;
@@ -16,6 +17,7 @@ import java.util.concurrent.CompletableFuture;
 @Setter
 public class PhoneService implements OTPSender {
 
+
     private String ACCOUNT_SID;
     private String AUTH_TOKEN;
     private String SERVICE_ID;
@@ -26,6 +28,7 @@ public class PhoneService implements OTPSender {
         Twilio.setRegion("us1");
         Twilio.setEdge("singapore");
     }
+
 
     @Override
     public void sendOTP(String sendTo, String otp) {
@@ -49,5 +52,6 @@ public class PhoneService implements OTPSender {
             System.out.println(e.getMessage());
         }
         return CompletableFuture.completedFuture(null);
+
     }
 }

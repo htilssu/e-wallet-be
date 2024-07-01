@@ -80,3 +80,4 @@ public class EmailService implements OTPSender {
         return CompletableFuture.completedFuture(null);
     }
 }
+

@@ -42,6 +42,8 @@ public class EWalletApplication {
             auth.anyRequest().permitAll();
         });
 
+        http.csrf(AbstractHttpConfigurer::disable);
+
         //add token filter to security filter chain
         http.addFilterBefore(new TokenFilter(), UsernamePasswordAuthenticationFilter.class);
 

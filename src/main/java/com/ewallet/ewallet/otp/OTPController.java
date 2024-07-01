@@ -28,7 +28,6 @@ public class OTPController {
             return Mono.just(ResponseEntity.badRequest().body("Data is invalid"));
         }
 
-
         switch (otpdata.getOtpType()) {
             case "email" -> {
                 otpManager.send(emailService, otpdata);
@@ -36,6 +35,7 @@ public class OTPController {
             }
 
             case "phone" -> {
+
                 otpManager.send(phoneService, otpdata);
                 return Mono.just(ResponseEntity.ok().body("OTP đã được gửi đến số điện thoại của bạn!"));
             }
