@@ -8,7 +8,5 @@ import lombok.Getter;
 public class OTPData {
 
     private String otpType;
-    private String phoneNumber;
-    private String email;
-
+    private String sendTo;
 }
