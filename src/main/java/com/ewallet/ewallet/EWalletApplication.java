@@ -3,6 +3,7 @@ package com.ewallet.ewallet;
 import com.ewallet.ewallet.security.filter.TokenFilter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -15,8 +16,9 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 @Configuration
 @EnableWebMvc
-@EnableAsync
+@EnableAsync(proxyTargetClass = true)
 @SpringBootApplication
+@EnableCaching(proxyTargetClass = true)
 public class EWalletApplication {
 
     public static void main(String[] args) {
