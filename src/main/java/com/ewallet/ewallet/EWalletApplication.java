@@ -56,22 +56,4 @@ public class EWalletApplication {
     }
 
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(auth -> {
-            auth.requestMatchers("/", "/home")
-                    .permitAll()
-                    .requestMatchers("/user/**")
-                    .hasRole("USER")
-                    .anyRequest()
-                    .authenticated();
-        });
-
-        //add token filter to security filter chain
-        http.addFilterBefore(new TokenFilter(), UsernamePasswordAuthenticationFilter.class);
-
-
-        return http.build();
-    }
-
 }
