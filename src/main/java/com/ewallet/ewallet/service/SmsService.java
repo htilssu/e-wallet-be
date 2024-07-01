@@ -15,7 +15,7 @@ import java.util.concurrent.CompletableFuture;
 @Service
 @ConfigurationProperties(prefix = "twilio.config")
 @Setter
-public class PhoneService implements OTPSender {
+public class SmsService implements OTPSender {
 
 
     private String ACCOUNT_SID;

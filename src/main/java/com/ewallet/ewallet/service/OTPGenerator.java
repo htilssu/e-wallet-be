@@ -24,7 +24,10 @@ public class OTPGenerator {
             .build();
 
     /**
-     * Tạo mã OTP mới
+     * Tạo mã OTP mới và trả về 1 {@link CompletableFuture} chứa mã OTP
+     * để lấy được mã OTP, sử dụng phương thức {@link CompletableFuture#get()}
+     * hoặc nếu muốn xử lý bất đồng bộ thì sử dụng phương thức {@link CompletableFuture#thenAccept(java.util.function.Consumer)}
+     * truyền vào một {@link java.util.function.Consumer} để xử lý mã OTP
      * @return mã otp
      */
     @Async

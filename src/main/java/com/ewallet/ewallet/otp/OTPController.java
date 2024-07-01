@@ -1,8 +1,7 @@
 package com.ewallet.ewallet.otp;
 
 import com.ewallet.ewallet.service.EmailService;
-import com.ewallet.ewallet.service.OTPGenerator;
-import com.ewallet.ewallet.service.PhoneService;
+import com.ewallet.ewallet.service.SmsService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
@@ -19,7 +18,7 @@ public class OTPController {
 
     OTPManager otpManager;
     EmailService emailService;
-    PhoneService phoneService;
+    SmsService smsService;
 
     @PostMapping
     public Mono<ResponseEntity<String>> sendOtp(@RequestBody @Nullable OTPData otpdata) {
@@ -36,7 +35,7 @@ public class OTPController {
 
             case "phone" -> {
 
-                otpManager.send(phoneService, otpdata);
+                otpManager.send(smsService, otpdata);
                 return Mono.just(ResponseEntity.ok().body("OTP đã được gửi đến số điện thoại của bạn!"));
             }
             default -> {
