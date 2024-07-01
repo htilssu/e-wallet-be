@@ -11,7 +11,7 @@ import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
 
 @Service
-public class OTPService {
+public class OTPGenerator {
     byte[] secret = SecretGenerator.generate();
 
     @Getter

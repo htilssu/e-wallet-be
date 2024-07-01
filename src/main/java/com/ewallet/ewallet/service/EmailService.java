@@ -1,5 +1,6 @@
 package com.ewallet.ewallet.service;
 
+import com.ewallet.ewallet.otp.OTPSender;
 import jakarta.mail.BodyPart;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeBodyPart;
@@ -7,17 +8,18 @@ import jakarta.mail.internet.MimeMessage;
 import jakarta.validation.constraints.Email;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
+import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
 
 @Service
-public class EmailService {
+public class EmailService implements OTPSender {
 
     public final JavaMailSender javaMailSender;
-    public  String otpTemplate= null;
-
+    public String otpTemplate = null;
 
     public EmailService(JavaMailSender javaMailSender) {
         this.javaMailSender = javaMailSender;
@@ -39,21 +41,42 @@ public class EmailService {
         javaMailSender.send(msg);
     }
 
-    public void sendOtp(String toEmail, String subject, String otpCode) {
+    @Override
+    public void sendOTP(String sendTo, String otp) {
         var newMail = javaMailSender.createMimeMessage();
         // set the email recipient
 
-        String htmlText = otpTemplate.replace("{{otp}}", otpCode);
-
+        String htmlText = otpTemplate.replace("{{otp}}", otp);
 
         try {
-            newMail.setSubject(subject, "utf-8");
-            newMail.addRecipients(MimeMessage.RecipientType.TO, toEmail);
+            newMail.setSubject("Mã xác thực OTP", "utf-8");
+            newMail.addRecipients(MimeMessage.RecipientType.TO, sendTo);
             newMail.setContent(htmlText, "text/html; charset=utf-8");
         } catch (MessagingException e) {
             System.out.println(e.getMessage());
         }
 
         javaMailSender.send(newMail);
+    }
+
+    @Override
+    @Async
+    public CompletableFuture<Void> sendOTPAsync(String sendTo, String otp) {
+        var newMail = javaMailSender.createMimeMessage();
+        // set the email recipient
+
+        String htmlText = otpTemplate.replace("{{otp}}", otp);
+
+        try {
+            newMail.setSubject("Mã xác thực OTP", "utf-8");
+            newMail.addRecipients(MimeMessage.RecipientType.TO, sendTo);
+            newMail.setContent(htmlText, "text/html; charset=utf-8");
+        } catch (MessagingException e) {
+            CompletableFuture.failedFuture(e);
+        }
+
+        javaMailSender.send(newMail);
+
+        return CompletableFuture.completedFuture(null);
     }
 }

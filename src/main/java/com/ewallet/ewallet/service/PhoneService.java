@@ -1,5 +1,6 @@
 package com.ewallet.ewallet.service;
 
+import com.ewallet.ewallet.otp.OTPSender;
 import com.twilio.Twilio;
 import com.twilio.rest.verify.v2.service.Verification;
 import jakarta.annotation.PostConstruct;
@@ -13,7 +14,7 @@ import java.util.concurrent.CompletableFuture;
 @Service
 @ConfigurationProperties(prefix = "twilio.config")
 @Setter
-public class PhoneService {
+public class PhoneService implements OTPSender {
 
     private String ACCOUNT_SID;
     private String AUTH_TOKEN;
@@ -26,17 +27,27 @@ public class PhoneService {
         Twilio.setEdge("singapore");
     }
 
-    @Async
-    public CompletableFuture<Void> sendOtp(String phone) {
-
+    @Override
+    public void sendOTP(String sendTo, String otp) {
         try {
-            Verification verification = Verification.creator(SERVICE_ID, phone, "sms")
+            Verification verification = Verification.creator(SERVICE_ID, sendTo, "sms")
+                    .create();
+            System.out.println(verification.getSid());
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    @Override
+    @Async
+    public CompletableFuture<Void> sendOTPAsync(String sendTo, String otp) {
+        try {
+            Verification verification = Verification.creator(SERVICE_ID, sendTo, "sms")
                     .create();
             System.out.println(verification.getSid());
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
         return CompletableFuture.completedFuture(null);
-
     }
 }
