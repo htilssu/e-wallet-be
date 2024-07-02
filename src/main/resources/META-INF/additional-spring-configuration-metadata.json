@@ -39,5 +39,20 @@
       "name": "jwt.expire",
       "type": "java.lang.String",
       "description": "Description for jwt.expire."
+    },
+    {
+      "name": "aws.access.key.id",
+      "type": "java.lang.String",
+      "description": "Description for aws.access.key.id."
+    },
+    {
+      "name": "aws.secret.access.key",
+      "type": "java.lang.String",
+      "description": "Description for aws.secret.access.key."
+    },
+    {
+      "name": "aws.dynamodb.endpoint",
+      "type": "java.lang.String",
+      "description": "Description for aws.dynamodb.endpoint."
     }
   ] }

@@ -1,6 +1,5 @@
 package com.ewallet.ewallet.service;
 
-
 import com.ewallet.ewallet.otp.OTPSender;
 import com.twilio.Twilio;
 import com.twilio.rest.verify.v2.service.Verification;
@@ -11,12 +10,13 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Service
 @ConfigurationProperties(prefix = "twilio.config")
 @Setter
 public class SmsService implements OTPSender {
-
 
     private String ACCOUNT_SID;
     private String AUTH_TOKEN;
@@ -29,15 +29,15 @@ public class SmsService implements OTPSender {
         Twilio.setEdge("singapore");
     }
 
-
     @Override
     public void sendOTP(String sendTo, String otp) {
         try {
             Verification verification = Verification.creator(SERVICE_ID, sendTo, "sms")
                     .create();
-            System.out.println(verification.getSid());
+            Logger.getAnonymousLogger().log(Level.INFO, verification.getSid());
+
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            Logger.getAnonymousLogger().log(Level.WARNING, e.getMessage());
         }
     }
 
@@ -47,9 +47,9 @@ public class SmsService implements OTPSender {
         try {
             Verification verification = Verification.creator(SERVICE_ID, sendTo, "sms")
                     .create();
-            System.out.println(verification.getSid());
+            Logger.getAnonymousLogger().log(Level.INFO, verification.getSid());
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            Logger.getAnonymousLogger().log(Level.WARNING, e.getMessage());
         }
         return CompletableFuture.completedFuture(null);
 

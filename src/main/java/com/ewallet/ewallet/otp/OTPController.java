@@ -44,4 +44,9 @@ public class OTPController {
         }
 
     }
+
+    @PostMapping("/verify")
+    public void verifyOtp(@RequestBody OTPData otpData) {
+        otpManager.verify(otpData);
+    }
 }

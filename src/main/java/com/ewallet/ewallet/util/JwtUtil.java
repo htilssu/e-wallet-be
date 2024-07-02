@@ -19,12 +19,12 @@ import java.util.Date;
 @ConfigurationProperties(prefix = "jwt")
 public class JwtUtil {
 
-    static private Algorithm algorithm = Algorithm.none();
-    static private JWTVerifier verifier = JWT.require(algorithm).build();
+    private static Algorithm algorithm = Algorithm.none();
+    private static JWTVerifier verifier = JWT.require(algorithm).build();
     private static int expire = 60;
     private static String secret;
 
-    public static String generateToken( User user) {
+    public static String generateToken(User user) {
         //convert user to json
         return JWT.create()
                 .withIssuer("ewallet")

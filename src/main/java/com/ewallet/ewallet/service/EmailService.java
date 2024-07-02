@@ -1,11 +1,7 @@
 package com.ewallet.ewallet.service;
 
 import com.ewallet.ewallet.otp.OTPSender;
-import jakarta.mail.BodyPart;
 import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeBodyPart;
-import jakarta.mail.internet.MimeMessage;
-import jakarta.validation.constraints.Email;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
@@ -13,13 +9,16 @@ import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
 import java.util.concurrent.CompletableFuture;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static jakarta.mail.Message.RecipientType.TO;
 
 @Service
 public class EmailService implements OTPSender {
 
     public final JavaMailSender javaMailSender;
-    public String otpTemplate = null;
+    private String otpTemplate = null;
 
     public EmailService(JavaMailSender javaMailSender) {
         this.javaMailSender = javaMailSender;
@@ -28,8 +27,7 @@ public class EmailService implements OTPSender {
                 otpTemplate = new String(ip.readAllBytes());
             }
         } catch (Exception e) {
-            throw new RuntimeException(e);
-
+            Logger.getAnonymousLogger().log(Level.WARNING, e.getMessage());
         }
     }
 
@@ -50,10 +48,10 @@ public class EmailService implements OTPSender {
 
         try {
             newMail.setSubject("Mã xác thực OTP", "utf-8");
-            newMail.addRecipients(MimeMessage.RecipientType.TO, sendTo);
+            newMail.addRecipients(TO, sendTo);
             newMail.setContent(htmlText, "text/html; charset=utf-8");
         } catch (MessagingException e) {
-            System.out.println(e.getMessage());
+            Logger.getAnonymousLogger().log(Level.WARNING, e.getMessage());
         }
 
         javaMailSender.send(newMail);
@@ -69,7 +67,7 @@ public class EmailService implements OTPSender {
 
         try {
             newMail.setSubject("Mã xác thực OTP", "utf-8");
-            newMail.addRecipients(MimeMessage.RecipientType.TO, sendTo);
+            newMail.addRecipients(TO, sendTo);
             newMail.setContent(htmlText, "text/html; charset=utf-8");
         } catch (MessagingException e) {
             CompletableFuture.failedFuture(e);

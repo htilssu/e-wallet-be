@@ -1,9 +1,11 @@
 package com.ewallet.ewallet.util;
 
+import lombok.NoArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.security.SecureRandom;
 
+@NoArgsConstructor
 public final class PasswordUtil {
     public static String hashPassword(String password) {
     BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(10,
