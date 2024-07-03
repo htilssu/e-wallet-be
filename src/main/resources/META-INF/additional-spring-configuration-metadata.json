@@ -1,6 +1,36 @@
 {
   "properties": [
     {
+      "name": "paypal.url",
+      "type": "java.lang.String",
+      "description": "Description for paypal.url."
+    },
+    {
+      "name": "paypal.client.secret",
+      "type": "java.lang.String",
+      "description": "Description for paypal.client.secret."
+    },
+    {
+      "name": "paypal.client.id",
+      "type": "java.lang.String",
+      "description": "Description for paypal.client.id."
+    },
+    {
+      "name": "twilio.config.ACCOUNT_SID",
+      "type": "java.lang.String",
+      "description": "Description for twilio.config.ACCOUNT_SID."
+    },
+    {
+      "name": "twilio.config.AUTH_TOKEN",
+      "type": "java.lang.String",
+      "description": "Description for twilio.config.AUTH_TOKEN."
+    },
+    {
+      "name": "twilio.config.SERVICE_ID",
+      "type": "java.lang.String",
+      "description": "Description for twilio.config.SERVICE_ID."
+    },
+    {
       "name": "jwt.secret",
       "type": "java.lang.String",
       "description": "Description for jwt.secret."
@@ -9,5 +39,20 @@
       "name": "jwt.expire",
       "type": "java.lang.String",
       "description": "Description for jwt.expire."
+    },
+    {
+      "name": "aws.access.key.id",
+      "type": "java.lang.String",
+      "description": "Description for aws.access.key.id."
+    },
+    {
+      "name": "aws.secret.access.key",
+      "type": "java.lang.String",
+      "description": "Description for aws.secret.access.key."
+    },
+    {
+      "name": "aws.dynamodb.endpoint",
+      "type": "java.lang.String",
+      "description": "Description for aws.dynamodb.endpoint."
     }
   ] }

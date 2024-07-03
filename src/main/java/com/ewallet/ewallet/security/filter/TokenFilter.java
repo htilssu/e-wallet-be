@@ -4,6 +4,8 @@ import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class TokenFilter implements Filter {
 
@@ -15,7 +17,7 @@ public class TokenFilter implements Filter {
         try {
             filterChain.doFilter(servletRequest,servletResponse);
         } catch (IOException | ServletException e) {
-            System.out.println(e.getMessage());
+            Logger.getAnonymousLogger().log(Level.WARNING,e.getMessage());
         }
     }
 }

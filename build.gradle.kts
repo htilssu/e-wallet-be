@@ -38,9 +38,12 @@ dependencies {
     //jwt
     //    implementation("io.jsonwebtoken:jjwt:0.12.6")
     //one time password
-    implementation("com.github.bastiaanjansen:otp-java:2.0.3")
-    //twilio
-    implementation("com.twilio.sdk:twilio:10.4.0")
+    implementation("com.github.bastiaanjansen:otp-java:2.0.3") //twilio
+    implementation("com.twilio.sdk:twilio:10.4.0") 
+    
+    //dynamodb
+    implementation("software.amazon.awssdk:dynamodb-enhanced")
+
 
 
     runtimeOnly("com.microsoft.sqlserver:mssql-jdbc")
@@ -54,9 +57,11 @@ dependencies {
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
+
 dependencyManagement {
     imports {
         mavenBom("org.springframework.cloud:spring-cloud-dependencies:$springCloudVersion")
+        mavenBom("software.amazon.awssdk:bom:2.26.12")
     }
 }
 

@@ -22,10 +22,14 @@ public class OTPManager {
      */
     public void send(OTPSender otpSender, OTPData otpData) {
 
-        otpGenerator.generateOTP().thenAccept(otp -> {
-            otpSender.sendOTP(otpData.getSendTo(), otp);
-
-        });
+        otpGenerator.generateOTP().thenAccept(otp -> otpSender.sendOTP(otpData.getSendTo(), otp));
     }
 
+    /**
+     * Xác thực mã OTP có đúng của người dùng hiện tại hay không
+     *
+     * @param otpData
+     */
+    public void verify(OTPData otpData) {
+    }
 }
