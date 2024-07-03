@@ -36,17 +36,17 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
 
     //jwt
-    //    implementation("io.jsonwebtoken:jjwt:0.12.6")
+    implementation("io.jsonwebtoken:jjwt:0.12.6")
     //one time password
     implementation("com.github.bastiaanjansen:otp-java:2.0.3") //twilio
-    implementation("com.twilio.sdk:twilio:10.4.0") 
-    
+    implementation("com.twilio.sdk:twilio:10.4.0")
+
     //dynamodb
     implementation("software.amazon.awssdk:dynamodb-enhanced")
+    runtimeOnly("org.postgresql:postgresql")
 
 
 
-    runtimeOnly("com.microsoft.sqlserver:mssql-jdbc")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     "developmentOnly"("org.springframework.boot:spring-boot-devtools")
 
