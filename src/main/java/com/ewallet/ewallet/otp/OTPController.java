@@ -1,10 +1,13 @@
 package com.ewallet.ewallet.otp;
 
 import com.ewallet.ewallet.service.EmailService;
-import com.ewallet.ewallet.service.SmsService;
+import com.ewallet.ewallet.service.otp.SmsService;
+import com.ewallet.ewallet.util.AuthUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -47,6 +50,10 @@ public class OTPController {
 
     @PostMapping("/verify")
     public void verifyOtp(@RequestBody OTPData otpData) {
-        otpManager.verify(otpData);
+        var principal = AuthUtil.getPrincipal();
+        var context = SecurityContextHolder.getContext();
+        if (principal instanceof Authentication) {
+            var userId = ((Authentication) principal).getName();
+        }
     }
 }

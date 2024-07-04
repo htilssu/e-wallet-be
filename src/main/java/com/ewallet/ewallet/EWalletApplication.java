@@ -25,20 +25,17 @@ public class EWalletApplication {
                 .run(EWalletApplication.class, args);
     }
 
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//        http.authorizeHttpRequests(auth -> {
-//            auth.requestMatchers("/", "/home")
-//                    .permitAll()
-//                    .requestMatchers("/user/**")
-//                    .hasRole("USER")
-//                    .anyRequest()
-//                    .authenticated();
-//        });
-
         http.authorizeHttpRequests(auth -> {
-            auth.anyRequest().permitAll();
+            auth.requestMatchers("/auth/**")
+                    .permitAll()
+                    .requestMatchers("/user/**")
+                    .hasRole("USER")
+                    .requestMatchers("/admin/**")
+                    .hasRole("ADMIN")
+                    .anyRequest()
+                    .authenticated();
         });
 
         http.csrf(AbstractHttpConfigurer::disable);
@@ -49,6 +46,5 @@ public class EWalletApplication {
 
         return http.build();
     }
-
 
 }

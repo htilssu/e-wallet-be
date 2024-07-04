@@ -23,7 +23,6 @@ repositories {
 }
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
     implementation("org.springframework.boot:spring-boot-starter-jdbc")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-websocket")
@@ -36,7 +35,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
 
     //jwt
-    //    implementation("io.jsonwebtoken:jjwt:0.12.6")
+    implementation("io.jsonwebtoken:jjwt:0.12.6")
     //one time password
     implementation("com.github.bastiaanjansen:otp-java:2.0.3") //twilio
     implementation("com.twilio.sdk:twilio:10.4.0") 
@@ -45,8 +44,16 @@ dependencies {
     implementation("software.amazon.awssdk:dynamodb-enhanced")
 
 
-
+    //dynamodb
+    implementation("software.amazon.awssdk:dynamodb-enhanced")
+    implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
+    runtimeOnly("org.postgresql:postgresql")
+    runtimeOnly("org.postgresql:r2dbc-postgresql")
     runtimeOnly("com.microsoft.sqlserver:mssql-jdbc")
+    runtimeOnly("io.r2dbc:r2dbc-mssql:1.0.0.RELEASE")
+
+
+
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     "developmentOnly"("org.springframework.boot:spring-boot-devtools")
 
