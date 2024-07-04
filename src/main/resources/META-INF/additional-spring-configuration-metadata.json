@@ -54,5 +54,10 @@
       "name": "aws.dynamodb.endpoint",
       "type": "java.lang.String",
       "description": "Description for aws.dynamodb.endpoint."
+    },
+    {
+      "name": "password.salt",
+      "type": "java.lang.String",
+      "description": "Description for password.salt."
     }
   ] }

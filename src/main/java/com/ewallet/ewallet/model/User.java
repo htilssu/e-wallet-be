@@ -1,15 +1,15 @@
 package com.ewallet.ewallet.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import com.ewallet.ewallet.account.Account;
+import lombok.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Table;
 
-@Getter
-@AllArgsConstructor
-public class User {
-    private String id;
-    private String username;
-    private String password;
-    private String email;
+
+public class User extends Account {
+    private double money;
+    private String gender;
+    private String address;
+    private String phone;
     private String role;
-
 }
