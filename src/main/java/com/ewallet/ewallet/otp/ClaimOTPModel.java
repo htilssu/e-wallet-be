@@ -1,6 +1,7 @@
 package com.ewallet.ewallet.otp;
 
 import com.ewallet.ewallet.util.DateTimeUtil;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,6 +14,7 @@ import java.time.temporal.ChronoUnit;
 
 @DynamoDbBean
 @Data
+@AllArgsConstructor
 @NoArgsConstructor
 public class ClaimOTPModel {
     private String otp;

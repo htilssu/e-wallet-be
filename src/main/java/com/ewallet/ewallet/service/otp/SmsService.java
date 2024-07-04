@@ -1,4 +1,4 @@
-package com.ewallet.ewallet.service;
+package com.ewallet.ewallet.service.otp;
 
 import com.ewallet.ewallet.otp.OTPSender;
 import com.twilio.Twilio;

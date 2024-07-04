@@ -1,4 +1,4 @@
-package com.ewallet.ewallet.service;
+package com.ewallet.ewallet.service.otp;
 
 import com.bastiaanjansen.otp.HMACAlgorithm;
 import com.bastiaanjansen.otp.SecretGenerator;
