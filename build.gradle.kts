@@ -37,9 +37,12 @@ dependencies {
     //jwt
     implementation("io.jsonwebtoken:jjwt:0.12.6")
     //one time password
-    implementation("com.github.bastiaanjansen:otp-java:2.0.3")
-    //twilio
-    implementation("com.twilio.sdk:twilio:10.4.0")
+    implementation("com.github.bastiaanjansen:otp-java:2.0.3") //twilio
+    implementation("com.twilio.sdk:twilio:10.4.0") 
+    
+    //dynamodb
+    implementation("software.amazon.awssdk:dynamodb-enhanced")
+
 
     //dynamodb
     implementation("software.amazon.awssdk:dynamodb-enhanced")
