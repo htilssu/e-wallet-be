@@ -59,6 +59,7 @@ jobs:
           chmod +x gradlew
           ./gradlew test
   docker-image:
+    environment: production
     needs: test
     runs-on: ubuntu-latest
     name: Docker Image
