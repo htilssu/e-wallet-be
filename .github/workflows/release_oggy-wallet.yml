@@ -16,7 +16,7 @@ on:
 
 jobs:
   build:
-    environment: production
+    environment: Production
     runs-on: ubuntu-latest
     name: Build
     steps:
@@ -59,7 +59,7 @@ jobs:
           chmod +x gradlew
           ./gradlew test
   docker-image:
-    environment: production
+    environment: Production
     needs: test
     runs-on: ubuntu-latest
     name: Docker Image
