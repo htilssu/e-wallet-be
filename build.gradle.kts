@@ -51,6 +51,8 @@ dependencies {
     runtimeOnly("org.postgresql:r2dbc-postgresql")
     runtimeOnly("com.microsoft.sqlserver:mssql-jdbc")
     runtimeOnly("io.r2dbc:r2dbc-mssql:1.0.0.RELEASE")
+    runtimeOnly("com.h2database:h2")
+    runtimeOnly("io.r2dbc:r2dbc-h2")
 
 
 
