@@ -81,17 +81,17 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: true
-          tags: htilssu/ewallet-springboot:lastest
+          tags: htilssu/ewallet-springboot:latest
   deploy:
     name: deploy
     needs: docker-image
     runs-on: self-hosted
     steps:
       - name: pull image
-        run: sudo docker pull htilssu/ewallet-springboot:lastest
+        run: sudo docker pull htilssu/ewallet-springboot:latest
 
       - name: rm docker container
         run: sudo docker rm -f ewallet || true
 
       - name: Run container
-        run: sudo docker run --name ewallet -d -p 80:8080 htilssu/ewallet-springboot:lastest
+        run: sudo docker run --name ewallet -d -p 80:8080 htilssu/ewallet-springboot:latest
