@@ -69,7 +69,9 @@ jobs:
         uses: actions/checkout@v4
 
       - name: set up secret
-        run: curl -sSL ${{secrets.ENV}} > ${{ github.workspace }}/src/main/resources/env.properties
+        run: | 
+          curl -sSL ${{secrets.ENV}} > ${{ github.workspace }}/src/main/resources/env.properties
+          ls ${{ github.workspace }}/src/main/resources
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
