@@ -1,6 +1,7 @@
 package com.ewallet.ewallet.util;
 
 import java.time.Instant;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
@@ -16,6 +17,12 @@ public class DateTimeUtil {
 
     public static Date convertToDate(String date){
         return Date.from(DateTimeFormatter.ISO_INSTANT.parse(date, Instant::from));
+    }
+
+    public static Instant convertSqlDateToInstant(java.sql.Date date){
+        var localDate = date.toLocalDate();
+
+        return localDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
     }
 
 }

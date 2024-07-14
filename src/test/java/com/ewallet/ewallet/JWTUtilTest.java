@@ -1,6 +1,6 @@
 //package com.ewallet.ewallet;
 //
-//import com.ewallet.ewallet.model.User;
+//import com.ewallet.ewallet.user.User;
 //import com.ewallet.ewallet.util.JwtUtil;
 //import org.junit.jupiter.api.DisplayName;
 //import org.junit.jupiter.api.Test;

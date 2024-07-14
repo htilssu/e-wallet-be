@@ -1,5 +1,6 @@
 package com.ewallet.ewallet.otp;
 
+import com.ewallet.ewallet.model.ResponseMessage;
 import com.ewallet.ewallet.service.EmailService;
 import com.ewallet.ewallet.service.otp.SmsService;
 import com.ewallet.ewallet.util.AuthUtil;
@@ -24,25 +25,32 @@ public class OTPController {
     SmsService smsService;
 
     @PostMapping
-    public Mono<ResponseEntity<String>> sendOtp(@RequestBody @Nullable OTPData otpdata) {
+    public Mono<ResponseEntity<ResponseMessage>> sendOtp(@RequestBody @Nullable OTPData otpdata,
+                                                         Authentication authentication) {
 
         if (otpdata == null) {
-            return Mono.just(ResponseEntity.badRequest().body("Data is invalid"));
+            return Mono.just(ResponseEntity.badRequest()
+                                     .body(new ResponseMessage("Data is invalid")));
         }
 
         switch (otpdata.getOtpType()) {
             case "email" -> {
-                otpManager.send(emailService, otpdata);
-                return Mono.just(ResponseEntity.ok().body("OTP đã được gửi đến email của bạn!"));
+                otpManager.send(emailService, otpdata, authentication);
+                return Mono.just(ResponseEntity.ok()
+                                         .body(new ResponseMessage(
+                                                 "OTP đã được gửi đến email của bạn!")));
             }
 
             case "phone" -> {
 
-                otpManager.send(smsService, otpdata);
-                return Mono.just(ResponseEntity.ok().body("OTP đã được gửi đến số điện thoại của bạn!"));
+                otpManager.send(smsService, otpdata, authentication);
+                return Mono.just(ResponseEntity.ok()
+                                         .body(new ResponseMessage(
+                                                 "OTP đã được gửi đến số điện thoại của bạn!")));
             }
             default -> {
-                return Mono.just(ResponseEntity.badRequest().body("Data is invalid"));
+                return Mono.just(ResponseEntity.badRequest().body(new ResponseMessage(
+                        "OTP type is invalid")));
             }
         }
 
