@@ -91,4 +91,4 @@ jobs:
         run: sudo docker pull htilssu/ewallet-springboot:lastest
 
       - name: Run container
-        run: sudo docker run --name ewallet -d -p 80:8080 htilssu/ewallet-springboot:lastest --rm
+        run: sudo docker run --name ewallet -d -p 80:8080 htilssu/ewallet-springboot:lastest
