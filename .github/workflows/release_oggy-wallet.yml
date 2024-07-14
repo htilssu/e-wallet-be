@@ -39,7 +39,7 @@ jobs:
 
   test:
     needs: build
-    environment: production
+    environment: Production
     runs-on: ubuntu-latest
     name: Test Check
     steps:
