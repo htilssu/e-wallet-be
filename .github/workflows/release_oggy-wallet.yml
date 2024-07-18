@@ -81,7 +81,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          context: .
+          context: ./
           push: true
           tags: htilssu/ewallet-springboot:latest
   deploy:
@@ -97,3 +97,6 @@ jobs:
 
       - name: Run container
         run: sudo docker run --name ewallet -d -p 80:8080 htilssu/ewallet-springboot:latest
+
+      - name: prune image
+        run: sudo docker image prune -f
