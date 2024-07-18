@@ -40,9 +40,11 @@ public class EWalletApplication {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
 
-        http.authorizeHttpRequests(auth -> auth.requestMatchers("/api/v?/auth/**")
+        http.authorizeHttpRequests(auth -> auth.requestMatchers("/api/v?/auth/**",
+                                                                "/api/v?/user/register"
+                )
                 .permitAll()
-                .requestMatchers("api/v?/user/**")
+                .requestMatchers("/api/v?/user/**")
                 .hasRole("USER")
                 .requestMatchers("/api/v?/partner/**")
                 .hasRole("PARTNER")
