@@ -57,11 +57,23 @@ public class OTPController {
     }
 
     @PostMapping("/verify")
-    public void verifyOtp(@RequestBody OTPData otpData) {
+    public Mono<ResponseEntity<ResponseMessage>> verifyOtp(@RequestBody OTPData otpData) {
         var principal = AuthUtil.getPrincipal();
-        var context = SecurityContextHolder.getContext();
+//        var context = SecurityContextHolder.getContext();
         if (principal instanceof Authentication) {
             var userId = ((Authentication) principal).getName();
+            boolean verifyStatus = otpManager.verify(userId, otpData);
+
+            if (verifyStatus)
+                return Mono.just(ResponseEntity.ok()
+                                         .body(new ResponseMessage("Mã OTP hợp lệ")));
+
+            return Mono.just(ResponseEntity.badRequest()
+                                     .body(new ResponseMessage("Mã OTP không hợp lệ")));
         }
+
+
+        return Mono.just(ResponseEntity.badRequest()
+                                 .body(new ResponseMessage("Người dùng không hợp lệ")));
     }
 }
