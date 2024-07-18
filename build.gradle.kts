@@ -43,6 +43,8 @@ dependencies {
     //dynamodb
     implementation("software.amazon.awssdk:dynamodb-enhanced")
 
+    implementation ("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+
 
     //dynamodb
     implementation("software.amazon.awssdk:dynamodb-enhanced")
