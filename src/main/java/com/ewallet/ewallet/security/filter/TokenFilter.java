@@ -20,17 +20,11 @@ public class TokenFilter implements Filter {
     public void doFilter(ServletRequest request,
                          ServletResponse response,
                          FilterChain chain) throws ServletException, IOException {
-        var req = (HttpServletRequest) request;
-        var res = (HttpServletResponse) response;
 
-        //set origin
-       var origin= req.getHeader("Origin");
-        res.setHeader("Access-Control-Allow-Origin", origin);
-        res.setHeader("Access-Control-Allow-Headers", "Access-Control-Allow-Headers, Content-Type, Authorization, X-Api");
-        res.setHeader("Access-Control-Allow-Credentials", "true");
-        res.setHeader("Accept", "application/json");
 
-        var authorizationContent = req.getHeader("Authorization");
+        var authorizationContent = setResponseHeader((HttpServletRequest) request,
+                                                     (HttpServletResponse) response
+        );
 
         if (authorizationContent == null || !authorizationContent.startsWith("Bearer ")) {
             chain.doFilter(request, response);
@@ -60,5 +54,15 @@ public class TokenFilter implements Filter {
         }
 
         chain.doFilter(request, response);
+    }
+
+    private String setResponseHeader(HttpServletRequest request, HttpServletResponse response) {
+//        response.setHeader("Access-Control-Allow-Origin", request.getHeader("Origin"));
+//        response.setHeader("Access-Control-Allow-Credentials", "true");
+//        response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PUT");
+//        response.setHeader("Access-Control-Max-Age", "3600");
+//        response.setHeader("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With, remember-me, Authorization");
+
+        return request.getHeader("Authorization");
     }
 }

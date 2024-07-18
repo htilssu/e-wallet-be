@@ -9,8 +9,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 @AllArgsConstructor
@@ -55,6 +53,6 @@ public class OTPManager {
     public boolean verify(String userId, OTPData otpData) {
         var userClaim = claimOTPRepository.findOtpByUserId(userId).join();
         if (userClaim.isExpired()) return false;
-        return Objects.equals(otpData.getOtp(), userClaim.getOtp());
+        return otpData.getOtp().equals(userClaim.getOtp());
     }
 }

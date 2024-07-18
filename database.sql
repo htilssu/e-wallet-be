@@ -1,5 +1,5 @@
-CREATE
-    DATABASE ewallet;
+-- CREATE
+--     DATABASE ewallet;
 -- open the database
 
 CREATE TABLE service
@@ -9,7 +9,19 @@ CREATE TABLE service
     service_type varchar(255) NOT NULL,
     api_key      varchar(255) NOT NULL);
 
+-- Partner
+CREATE TABLE partner
+(
+    id          int PRIMARY KEY,
+    name        varchar(255) NOT NULL,
+    description text,
+    service_id  int REFERENCES service (id),
+    api_key     varchar(255) NOT NULL,
+    balance     numeric      NOT NULL,
+    created     date         NOT NULL DEFAULT CURRENT_DATE);
+
 -- User
+
 CREATE TABLE "user"
 (
     id           char(10) PRIMARY KEY,
@@ -17,6 +29,7 @@ CREATE TABLE "user"
     last_name    varchar(50)  NOT NULL,
     email        varchar(255) NOT NULL,
     user_name    varchar(50),
+    avatar       varchar(255) NOT NULL,
     password     varchar(255) NOT NULL,
     dob          date         NOT NULL,
     gender       boolean,
@@ -24,12 +37,13 @@ CREATE TABLE "user"
     address      varchar(255),
     phone_number varchar(10),
     job          varchar(255),
-    service_id   int REFERENCES service (id),
-    UNIQUE (service_id, email),
-    UNIQUE (service_id, phone_number),
-    UNIQUE (service_id, user_name));
+    partner_id   int REFERENCES partner (id),
+    UNIQUE (partner_id, email),
+    UNIQUE (partner_id, phone_number),
+    UNIQUE (partner_id, user_name));
 
-CREATE INDEX user_index ON "user" (service_id, email, phone_number, user_name);
+
+CREATE INDEX user_index ON "user" (partner_id, email, phone_number, user_name);
 
 -- user id generation
 CREATE SEQUENCE user_id_seq START 1000000001;
@@ -58,7 +72,7 @@ CREATE OR REPLACE FUNCTION check_user_unique()
 AS
 $$
 BEGIN
-    IF NEW.service_id IS NULL THEN
+    IF NEW.partner_id IS NULL THEN
         IF EXISTS ( SELECT 1 FROM "user" WHERE email = NEW.email ) THEN
             RAISE EXCEPTION 'Email đã tồn tại';
             END IF;
@@ -98,15 +112,15 @@ CREATE TABLE employee
 (
     id      char(10) PRIMARY KEY REFERENCES "user" (id),
     salary  decimal(10, 2) NOT NULL,
-    ssn     varchar(15)    NOT NULL UNIQUE ,
+    ssn     varchar(15)    NOT NULL UNIQUE,
     role_id int REFERENCES role (id));
 
 
 CREATE TABLE wallet
 (
-    id                varchar(255) PRIMARY KEY,
-    owner_id          char(10) REFERENCES customer (id),
-    balance           numeric NOT NULL);
+    id       varchar(255) PRIMARY KEY,
+    owner_id char(10) REFERENCES customer (id),
+    balance  numeric NOT NULL);
 
 
 CREATE TABLE payment_method
@@ -115,8 +129,29 @@ CREATE TABLE payment_method
     name        varchar(50) NOT NULL,
     description varchar(255));
 
-
 -- Order table
+CREATE TABLE transaction
+(
+    id                char(15) PRIMARY KEY,
+    wallet_id         VARCHAR(255) REFERENCES wallet (id),
+    payment_method_id int REFERENCES payment_method (id),
+    money             decimal(10, 2) NOT NULL,
+    type              VARCHAR(50)    NOT NULL,
+    created           DATE           NOT NULL);
+
+CREATE SEQUENCE transaction_id_seq START 100000000000001;
+
+CREATE OR REPLACE FUNCTION generate_transaction_id()
+    RETURNS trigger
+    LANGUAGE plpgsql
+AS
+$$
+BEGIN
+    NEW.id := LPAD(NEXTVAL('transaction_id_seq')::text, 15, '0');
+    RETURN NEW;
+END;
+$$;
+
 
 
 CREATE TABLE "order"
@@ -149,6 +184,7 @@ CREATE OR REPLACE TRIGGER order_id_trigger
     ON "order"
     FOR EACH ROW
 EXECUTE FUNCTION generate_order_id();
+
 /*
 CREATE OR REPLACE FUNCTION check_order_transaction()
     RETURNS TRIGGER
@@ -179,27 +215,6 @@ EXECUTE FUNCTION check_order_transaction();*/
 
 -- Transaction table
 
-CREATE TABLE transaction
-(
-    id                char(15) PRIMARY KEY,
-    wallet_id         VARCHAR(255) REFERENCES wallet (id),
-    payment_method_id int REFERENCES payment_method (id),
-    money             decimal(10, 2) NOT NULL,
-    type              VARCHAR(50)    NOT NULL,
-    created           DATE           NOT NULL);
-
-CREATE SEQUENCE transaction_id_seq START 100000000000001;
-
-CREATE OR REPLACE FUNCTION generate_transaction_id()
-    RETURNS trigger
-    LANGUAGE plpgsql
-AS
-$$
-BEGIN
-    NEW.id := LPAD(NEXTVAL('transaction_id_seq')::text, 15, '0');
-    RETURN NEW;
-END;
-$$;
 
 -- Support Ticket
 CREATE TABLE support_ticker
@@ -259,17 +274,4 @@ CREATE TABLE service_statistic
     income  numeric                     NOT NULL,
     outcome numeric                     NOT NULL,
     PRIMARY KEY (month, year, service));
-
-
-create table partner
-(
-    id          int PRIMARY KEY,
-    name        varchar(255) NOT NULL,
-    description text,
-    service_id  int REFERENCES service (id),
-    api_key     varchar(255) NOT NULL,
-    balance     numeric NOT NULL,
-    created     date NOT NULL DEFAULT CURRENT_DATE);
-
-
 
