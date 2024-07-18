@@ -32,7 +32,7 @@ public class UserController {
         final Mono<User> foundedUser = userRepository.findByEmail(user.getEmail());
 
 
-        return foundedUser.map(u -> Mono.just(ResponseEntity.badRequest()
+        return foundedUser.map(u -> Mono.just(ResponseEntity.ok()
                                                       .body(new ResponseMessage(
                                                               "Người dùng đã tồn tại"))))
                 .switchIfEmpty(Mono.fromSupplier(() -> {
