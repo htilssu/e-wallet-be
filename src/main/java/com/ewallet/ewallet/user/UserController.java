@@ -4,11 +4,9 @@ import com.ewallet.ewallet.model.ResponseMessage;
 import com.ewallet.ewallet.validator.UserValidator;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 @RestController
@@ -38,10 +36,20 @@ public class UserController {
                 .switchIfEmpty(Mono.fromSupplier(() -> {
                     user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
                     user.setPassword(""); //remove password from response
-                    final Mono<User> saved = userRepository.save(user);
-                    return saved.map(userSaved -> ResponseEntity.ok(new ResponseMessage(
-                            "Đăng ký thành công")));
+
+
+                    return userRepository.save(user)
+                            .flatMap(savedEntity -> Mono.just(ResponseEntity.ok(new ResponseMessage(
+                                    "Đăng ký thành công"))))
+                            .onErrorResume(error -> Mono.just(ResponseEntity.ok()
+                                                                      .body(new ResponseMessage(
+                                                                              error.getCause().getMessage()))));
                 }));
 
+    }
+
+    @GetMapping("/")
+    public Mono<User> getUser(Authentication authentication) {
+        return userRepository.findById(authentication.getName());
     }
 }
