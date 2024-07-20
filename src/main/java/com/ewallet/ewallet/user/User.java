@@ -21,6 +21,8 @@ public class User {
     String password;
     String phoneNumber;
     String address;
+    boolean isActive;
+    boolean isVerified;
     LocalDate dob;
     boolean gender;
     LocalDate created;
