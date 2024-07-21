@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 @Service
 @AllArgsConstructor
@@ -34,7 +35,7 @@ public class OTPManager {
             ClaimOTPModel claim = new ClaimOTPModel(otp,
                                                     authentication.getPrincipal().toString(),
                                                     DateTimeUtil.convertToString(
-                                                            Instant.now())
+                                                            Instant.now().plus(30, ChronoUnit.MINUTES))
             );
 
             claimOTPRepository.save(claim).join(); //save

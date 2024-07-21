@@ -35,7 +35,6 @@ public class UserController {
                                                               "Người dùng đã tồn tại"))))
                 .switchIfEmpty(Mono.fromSupplier(() -> {
                     user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-                    user.setPassword(""); //remove password from response
 
 
                     return userRepository.save(user)

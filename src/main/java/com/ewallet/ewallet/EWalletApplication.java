@@ -41,12 +41,12 @@ public class EWalletApplication {
 
 
         http.authorizeHttpRequests(auth -> auth.requestMatchers("/api/v?/auth/**",
-                                                                "/api/v?/user/register"
+                                                                "/api/v?/user/register", "/api/v?/partner/register"
                 )
                 .permitAll()
                 .requestMatchers("/api/v?/user/**")
                 .hasRole("USER")
-                .requestMatchers("/api/v?/partner/**")
+                .requestMatchers("/api/v?/partner/**", "/api/v?/order/**")
                 .hasRole("PARTNER")
                 .requestMatchers("/api/v?/admin/**")
                 .hasRole("ADMIN")

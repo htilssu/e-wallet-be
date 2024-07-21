@@ -1,6 +1,5 @@
-package com.ewallet.ewallet.util;
+package com.ewallet.ewallet.config;
 
-import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,14 +8,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.beans.Encoder;
 import java.security.SecureRandom;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Service
 @Configuration
-public class PasswordUtil {
+public class PasswordConfiguration {
 
     @Value("${password.salt}")
     private String salt;

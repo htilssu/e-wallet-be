@@ -44,6 +44,7 @@ dependencies {
     implementation("software.amazon.awssdk:dynamodb-enhanced")
 
     implementation ("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+    implementation("com.google.guava:guava:33.2.1-jre")
 
 
     //dynamodb

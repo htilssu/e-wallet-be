@@ -27,4 +27,5 @@ public class User {
     boolean gender;
     LocalDate created;
     String job;
+    String partnerId;
 }
