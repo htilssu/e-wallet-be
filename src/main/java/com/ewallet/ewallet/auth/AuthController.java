@@ -25,13 +25,13 @@ public class AuthController {
                                          BCryptPasswordEncoder bCryptPasswordEncoder) {
 
         if (user.getUsername() == null || user.getPassword() == null) {
-            return Mono.just(ResponseEntity.badRequest()
+            return Mono.just(ResponseEntity.ok()
                                      .body(new ResponseMessage(
                                              "Đăng nhập thất bại, vui lòng kiểm tra lại thông tin")));
         }
 
         if (!EmailValidator.isValid(user.getUsername())) {
-            return Mono.just(ResponseEntity.badRequest()
+            return Mono.just(ResponseEntity.ok()
                                      .body(new ResponseMessage(
                                              "Đăng nhập thất bại, vui lòng kiểm tra lại thông tin")));
         }
@@ -57,7 +57,7 @@ public class AuthController {
                                 );
                     }
                     else {
-                        return ResponseEntity.badRequest()
+                        return ResponseEntity.ok()
                                 .body(new ResponseMessage(
                                         "Mật khẩu không đúng"));
                     }
@@ -69,9 +69,7 @@ public class AuthController {
 
     @GetMapping("/logout")
     public Mono<String> logout() {
-        return Mono.just("Logout success");
+        return Mono.just("Đăng xuất thành công!");
     }
-
-
 
 }

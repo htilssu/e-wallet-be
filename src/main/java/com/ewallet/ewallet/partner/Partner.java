@@ -12,8 +12,10 @@ public class Partner {
     String id;
     String name;
     String description;
-    String serviceId;
+    String email;
+    String password;
+    String apiBaseUrl;
     String apiKey;
-    String balance;
+    double balance;
     String created;
 }
