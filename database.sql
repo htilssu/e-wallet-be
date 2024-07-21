@@ -82,9 +82,11 @@ CREATE TABLE service
     id           int PRIMARY KEY,
     name         varchar(255) NOT NULL,
     service_type varchar(255) NOT NULL,
-    api_key      varchar(255) NOT NULL);
+    api_key      varchar(255) NOT NULL
+);
 
 -- Partner
+
 DROP SEQUENCE IF EXISTS partner_id_seq;
 
 CREATE SEQUENCE partner_id_seq START 1;
@@ -121,7 +123,6 @@ CREATE OR REPLACE TRIGGER partner_create_wallet_trigger
 EXECUTE FUNCTION create_wallet('partner');
 
 
-
 -- User
 
 -- user id generation
@@ -154,6 +155,7 @@ CREATE TABLE "user"
     avatar       varchar(255) NULL,
     password     varchar(255) NOT NULL,
     dob          date         NOT NULL,
+
     is_active    boolean      NOT NULL            DEFAULT TRUE,
     is_verified  boolean      NOT NULL            DEFAULT FALSE,
     gender       boolean,
@@ -168,6 +170,7 @@ CREATE TABLE "user"
     CHECK ( dob <= CURRENT_DATE));
 
 CREATE INDEX user_index ON "user" (email, user_name, phone_number);
+
 
 CREATE INDEX user_email_index ON "user" (email);
 
@@ -194,8 +197,11 @@ BEGIN
             END IF;
         IF EXISTS ( SELECT 1 FROM "user" WHERE partner_id IS NULL AND user_name = NEW.user_name ) THEN
             RAISE EXCEPTION 'Tên đăng nhập đã tồn tại';
-            END IF;
         END IF;
+    end if;
+
+
+    NEW.id := LPAD(NEXTVAL('user_id_seq')::text, 10, '0');
 
     IF NEW.partner_id IS NOT NULL THEN
         IF EXISTS ( SELECT 1 FROM "user" WHERE partner_id = new.partner_id AND email = NEW.email ) THEN
@@ -223,6 +229,7 @@ CREATE OR REPLACE TRIGGER user_unique_trigger
     FOR EACH ROW
 EXECUTE FUNCTION check_user_unique();
 
+
 CREATE OR REPLACE TRIGGER user_create_wallet_trigger
     AFTER INSERT
     ON "user"
@@ -230,13 +237,13 @@ CREATE OR REPLACE TRIGGER user_create_wallet_trigger
 EXECUTE FUNCTION create_wallet('user');
 
 
-
 DROP TABLE IF EXISTS role CASCADE;
 
 CREATE TABLE role
 (
     id   int PRIMARY KEY,
-    name varchar(50) NOT NULL);
+    name varchar(50) NOT NULL
+);
 
 -- Employee
 DROP TABLE IF EXISTS employee CASCADE;
@@ -246,10 +253,13 @@ CREATE TABLE employee
     id      char(10) PRIMARY KEY REFERENCES "user" (id),
     salary  decimal(10, 2) NOT NULL,
     ssn     varchar(15)    NOT NULL UNIQUE,
-    role_id int REFERENCES role (id));
+    role_id int REFERENCES role (id)
+);
+
 
 DROP TABLE IF EXISTS transaction CASCADE;
 DROP SEQUENCE IF EXISTS transaction_id_seq;
+
 
 CREATE SEQUENCE transaction_id_seq START 100000000000001;
 
@@ -264,6 +274,15 @@ BEGIN
 END;
 $$;
 
+CREATE TABLE payment_system
+(
+    id         SERIAL PRIMARY KEY,
+    name       VARCHAR(50)         NOT NULL,
+    type       payment_system_type NOT NULL,
+    api_key    VARCHAR(255),
+    api_secret VARCHAR(255),
+    is_active  BOOLEAN DEFAULT true
+);
 
 CREATE TABLE transaction
 (
@@ -353,7 +372,8 @@ CREATE TABLE support_ticket
     customer_id char(10) REFERENCES "user" (id),
     title       varchar(255) NOT NULL,
     content     text         NOT NULL,
-    status      varchar(50)  NOT NULL);
+    status      varchar(50)  NOT NULL
+);
 
 -- Group Fund
 DROP TABLE IF EXISTS group_fund CASCADE;
@@ -365,7 +385,8 @@ CREATE TABLE group_fund
     description varchar(255),
     balance     decimal(10, 2) NOT NULL,
     target      decimal(10, 2) NOT NULL,
-    owner_id    char(10) REFERENCES "user" (id));
+    owner_id    char(10) REFERENCES "user" (id)
+);
 
 DROP SEQUENCE IF EXISTS group_fund_id_seq;
 
@@ -376,7 +397,8 @@ CREATE TABLE fund_member
     group_id  int REFERENCES group_fund (id),
     member_id char(10) REFERENCES "user" (id),
     money     numeric NOT NULL DEFAULT 0,
-    PRIMARY KEY (group_id, member_id));
+    PRIMARY KEY (group_id, member_id)
+);
 
 
 DROP TABLE IF EXISTS financial_statistic CASCADE;
@@ -390,7 +412,8 @@ CREATE TABLE financial_statistic
     income      numeric NOT NULL,
     outcome     numeric NOT NULL,
     total_money numeric NOT NULL,
-    created     DATE    NOT NULL DEFAULT CURRENT_DATE);
+    created     DATE    NOT NULL DEFAULT CURRENT_DATE
+);
 
 /*drop table if exists customer_statistic cascade;
 CREATE TABLE customer_statistic
@@ -412,7 +435,8 @@ CREATE TABLE service_statistic
     service int REFERENCES service (id) NOT NULL,
     income  numeric                     NOT NULL,
     outcome numeric                     NOT NULL,
-    PRIMARY KEY (month, year, service));
+    PRIMARY KEY (month, year, service)
+);
 
 DROP TABLE IF EXISTS payment_system CASCADE;
 
