@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.data.relational.core.mapping.Table;
 
+import java.time.LocalDate;
+
 @AllArgsConstructor
 @Data
 @Table("partner")
@@ -17,5 +19,5 @@ public class Partner {
     String apiBaseUrl;
     String apiKey;
     double balance;
-    String created;
+    LocalDate created;
 }

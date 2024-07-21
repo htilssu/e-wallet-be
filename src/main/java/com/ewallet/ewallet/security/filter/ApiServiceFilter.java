@@ -50,10 +50,12 @@ public class ApiServiceFilter implements Filter {
 
             if (authentication == null) {
                 context.setAuthentication(new UsernamePasswordAuthenticationToken(partner
-                        , apiKey, Collections.singleton(new SimpleGrantedAuthority("PARTNER"))));
+                        , apiKey, Collections.singleton(new SimpleGrantedAuthority("ROLE_PARTNER"))));
             }
 
             req.setAttribute("partner", partner);
+            chain.doFilter(request, response);
+            return;
         }
 
         HttpServletResponse res = (HttpServletResponse) response;

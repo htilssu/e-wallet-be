@@ -8,7 +8,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -57,11 +56,9 @@ public class OTPController {
     }
 
     @PostMapping("/verify")
-    public Mono<ResponseEntity<ResponseMessage>> verifyOtp(@RequestBody OTPData otpData) {
-        var principal = AuthUtil.getPrincipal();
-//        var context = SecurityContextHolder.getContext();
-        if (principal instanceof Authentication) {
-            var userId = ((Authentication) principal).getName();
+    public Mono<ResponseEntity<ResponseMessage>> verifyOtp(@RequestBody OTPData otpData, Authentication authentication) {
+        if (authentication != null) {
+            var userId = (String) authentication.getPrincipal() ;
             boolean verifyStatus = otpManager.verify(userId, otpData);
 
             if (verifyStatus)
