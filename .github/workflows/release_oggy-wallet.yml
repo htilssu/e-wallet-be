@@ -65,8 +65,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: set up secret
-        run: |
-           ${{secrets.ENV}} > ${{ github.workspace }}/src/main/resources/env.properties
+        run: echo "${{ secrets.ENV }}" > "${{ github.workspace }}/src/main/resources/env.properties"
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -96,7 +95,7 @@ jobs:
         run: sudo docker rm -f ewallet || true
 
       - name: Run container
-        run: sudo docker run --name ewallet -d -p 80:8080 htilssu/ewallet-springboot:latest
+        run: sudo docker run --name ewallet -d -p 8080:8080 htilssu/ewallet-springboot:latest
 
       - name: prune image
         run: sudo docker image prune -f
