@@ -32,7 +32,8 @@ CREATE TABLE wallet
     currency   VARCHAR(3) NOT NULL DEFAULT 'VND',
     owner_id   char(10),
     balance    numeric    NOT NULL DEFAULT 0,
-    CONSTRAINT uk_wallet_owner UNIQUE (owner_type, owner_id));
+    CONSTRAINT uk_wallet_owner UNIQUE (owner_type, owner_id)
+);
 
 CREATE OR REPLACE FUNCTION check_wallet_owner()
     RETURNS trigger
@@ -40,16 +41,16 @@ AS
 $$
 BEGIN
     IF new.owner_type = 'user' THEN
-        IF NOT EXISTS ( SELECT 1 FROM "user" WHERE id = new.owner_id ) THEN
+        IF NOT EXISTS (SELECT 1 FROM "user" WHERE id = new.owner_id) THEN
             RAISE EXCEPTION 'User không tồn tại';
-            END IF;
         END IF;
+    END IF;
 
     IF new.owner_type = 'partner' THEN
-        IF NOT EXISTS ( SELECT 1 FROM partner WHERE id = new.owner_id ) THEN
+        IF NOT EXISTS (SELECT 1 FROM partner WHERE id = new.owner_id) THEN
             RAISE EXCEPTION 'Partner không tồn tại';
-            END IF;
         END IF;
+    END IF;
 
     RETURN new;
 END;
@@ -67,8 +68,8 @@ AS
 $$
 BEGIN
     INSERT
-        INTO wallet (owner_type, owner_id, currency, balance)
-        VALUES (tg_argv[0]::owner_type, new.id, 'VND', 0);
+    INTO wallet (owner_type, owner_id, currency, balance)
+    VALUES (tg_argv[0]::owner_type, new.id, 'VND', 0);
 
     RETURN new;
 END
@@ -114,7 +115,8 @@ CREATE TABLE partner
     balance      numeric      NOT NULL,
     created      date         NOT NULL DEFAULT CURRENT_DATE,
     UNIQUE (email),
-    UNIQUE (api_key));
+    UNIQUE (api_key)
+);
 
 CREATE OR REPLACE TRIGGER partner_create_wallet_trigger
     AFTER INSERT
@@ -167,7 +169,8 @@ CREATE TABLE "user"
     CHECK ( phone_number ~ '^[0-9]{10}$' ),
     CHECK ( email ~ '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$' ),
     CHECK ( user_name ~ '^[a-zA-Z0-9._%+-]{6,}$' ),
-    CHECK ( dob <= CURRENT_DATE));
+    CHECK ( dob <= CURRENT_DATE)
+);
 
 CREATE INDEX user_index ON "user" (email, user_name, phone_number);
 
@@ -189,13 +192,13 @@ BEGIN
     --     raise exception 'partner_id %', NEW.partner_id;
 
     IF NEW.partner_id ISNULL THEN
-        IF EXISTS ( SELECT 1 FROM "user" WHERE partner_id ISNULL AND email = NEW.email ) THEN
+        IF EXISTS (SELECT 1 FROM "user" WHERE partner_id ISNULL AND email = NEW.email) THEN
             RAISE EXCEPTION 'Email đã tồn tại';
-            END IF;
-        IF EXISTS ( SELECT 1 FROM "user" WHERE partner_id IS NULL AND phone_number = NEW.phone_number ) THEN
+        END IF;
+        IF EXISTS (SELECT 1 FROM "user" WHERE partner_id IS NULL AND phone_number = NEW.phone_number) THEN
             RAISE EXCEPTION 'Số điện thoại đã tồn tại';
-            END IF;
-        IF EXISTS ( SELECT 1 FROM "user" WHERE partner_id IS NULL AND user_name = NEW.user_name ) THEN
+        END IF;
+        IF EXISTS (SELECT 1 FROM "user" WHERE partner_id IS NULL AND user_name = NEW.user_name) THEN
             RAISE EXCEPTION 'Tên đăng nhập đã tồn tại';
         END IF;
     end if;
@@ -204,16 +207,16 @@ BEGIN
     NEW.id := LPAD(NEXTVAL('user_id_seq')::text, 10, '0');
 
     IF NEW.partner_id IS NOT NULL THEN
-        IF EXISTS ( SELECT 1 FROM "user" WHERE partner_id = new.partner_id AND email = NEW.email ) THEN
+        IF EXISTS (SELECT 1 FROM "user" WHERE partner_id = new.partner_id AND email = NEW.email) THEN
             RAISE EXCEPTION 'Email đã tồn tại';
-            END IF;
-        IF EXISTS ( SELECT 1 FROM "user" WHERE partner_id = new.partner_id AND phone_number = NEW.phone_number ) THEN
-            RAISE EXCEPTION 'Số điện thoại đã tồn tại';
-            END IF;
-        IF EXISTS ( SELECT 1 FROM "user" WHERE partner_id = new.partner_id AND user_name = NEW.user_name ) THEN
-            RAISE EXCEPTION 'Tên đăng nhập đã tồn tại';
-            END IF;
         END IF;
+        IF EXISTS (SELECT 1 FROM "user" WHERE partner_id = new.partner_id AND phone_number = NEW.phone_number) THEN
+            RAISE EXCEPTION 'Số điện thoại đã tồn tại';
+        END IF;
+        IF EXISTS (SELECT 1 FROM "user" WHERE partner_id = new.partner_id AND user_name = NEW.user_name) THEN
+            RAISE EXCEPTION 'Tên đăng nhập đã tồn tại';
+        END IF;
+    END IF;
 
     new.id := generate_user_id();
 
@@ -286,14 +289,14 @@ CREATE TABLE payment_system
 
 CREATE TABLE transaction
 (
-    id                      char(15) PRIMARY KEY DEFAULT generate_transaction_id(),
-    money                   decimal(10, 2)     NOT NULL,
-    currency                VARCHAR(3)         NOT NULL,
-    transaction_type        transaction_type   NOT NULL,
-    transaction_target      transaction_target NOT NULL,
-    status                  transaction_status NOT NULL DEFAULT 'pending',
-    timestamp               TIMESTAMP                   DEFAULT CURRENT_TIMESTAMP);
-
+    id                 char(15) PRIMARY KEY        DEFAULT generate_transaction_id(),
+    money              decimal(10, 2)     NOT NULL,
+    currency           VARCHAR(3)         NOT NULL,
+    transaction_type   transaction_type   NOT NULL,
+    transaction_target transaction_target NOT NULL,
+    status             transaction_status NOT NULL DEFAULT 'pending',
+    timestamp          TIMESTAMP                   DEFAULT CURRENT_TIMESTAMP
+);
 
 
 -- Order table
@@ -305,11 +308,16 @@ CREATE TABLE "order"
     partner_id              char(10) REFERENCES partner (id),
     money                   decimal(10, 2) NOT NULL,
     status                  varchar(50)    NOT NULL,
-    invoice_id              varchar(50)    NULL UNIQUE,
+--     invoice_id              varchar(50)    NULL UNIQUE,
     transaction_id          varchar(15)    NULL REFERENCES transaction (id),
+    voucher_id char(15) NULL,
     external_transaction_id SERIAL REFERENCES payment_system (id),
     created                 date           NOT NULL DEFAULT CURRENT_DATE,
-    updated                 date           NOT NULL DEFAULT CURRENT_DATE);
+    updated                 date           NOT NULL DEFAULT CURRENT_DATE,
+    unique (external_transaction_id),
+    unique (transaction_id),
+    unique (id, partner_id)
+);
 
 
 DROP SEQUENCE IF EXISTS order_id_seq;
@@ -447,7 +455,8 @@ CREATE TABLE payment_system
     type       payment_system_type NOT NULL,
     api_key    VARCHAR(255),
     api_secret VARCHAR(255),
-    is_active  BOOLEAN DEFAULT TRUE);
+    is_active  BOOLEAN DEFAULT TRUE
+);
 
 
 drop table if exists group_fund_transaction cascade;
@@ -458,4 +467,5 @@ CREATE TABLE group_fund_transaction
     group_id       int REFERENCES group_fund (id),
     member_id      char(10) REFERENCES "user" (id),
     money          numeric NOT NULL,
-    created        date    NOT NULL DEFAULT CURRENT_DATE);
+    created        date    NOT NULL DEFAULT CURRENT_DATE
+);

@@ -49,7 +49,7 @@ public class AuthController {
                         u.setPassword(null);
                         return ResponseEntity.status(200)
                                 .header("Set-Cookie",
-                                        "token=" + JwtUtil.generateToken(u) + "; Path=/; SameSite=None; Secure"
+                                        "token=" + JwtUtil.generateToken(u) + "; Path=/; SameSite=None; Secure; Partitioned; Max-Age=99999;"
                                 )
                                 .body(ObjectUtil.mergeObjects(ObjectUtil.wrapObject("user", u),
                                                               new ResponseMessage("Đăng nhập thành công")
