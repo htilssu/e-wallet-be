@@ -33,15 +33,16 @@ public class EWalletApplication {
     public SecurityFilterChain securityFilterChain(HttpSecurity http,
                                                    ApiServiceFilter apiServiceFilter) throws
                                                                                       Exception {
-        http
-                .formLogin(AbstractHttpConfigurer::disable)
+        http.formLogin(AbstractHttpConfigurer::disable)
                 .logout(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+                .sessionManagement(session ->
+                                           session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
 
         http.authorizeHttpRequests(auth -> auth.requestMatchers("/api/v?/auth/**",
-                                                                "/api/v?/user/register", "/api/v?/partner/register"
+                                                                "/api/v?/user/register",
+                                                                "/api/v?/partner/register"
                 )
                 .permitAll()
                 .requestMatchers("/api/v?/user/**")
@@ -78,6 +79,7 @@ public class EWalletApplication {
         corsConfiguration.setAllowCredentials(true);
         corsConfiguration.addAllowedMethod("*");
         corsConfiguration.addAllowedHeader("*");
+        corsConfiguration.addAllowedOriginPattern("https://*:[*]");
         corsConfiguration.addAllowedOriginPattern("http://*:[*]");
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
