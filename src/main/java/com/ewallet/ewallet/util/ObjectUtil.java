@@ -12,12 +12,13 @@ public class ObjectUtil {
         objectMapper.registerModule(new JavaTimeModule());
     }
 
-    public static ObjectNode mergeObjects(Object obj1, Object obj2) {
+    public static ObjectNode mergeObjects(Object ...object) {
 
 
         ObjectNode result = objectMapper.createObjectNode();
-        result.setAll((ObjectNode) objectMapper.valueToTree(obj1));
-        result.setAll((ObjectNode) objectMapper.valueToTree(obj2));
+        for (Object o : object) {
+            result.setAll((ObjectNode) objectMapper.valueToTree(o));
+        }
 
         return result;
     }

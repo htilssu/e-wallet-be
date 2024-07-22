@@ -53,8 +53,8 @@ public class AuthController {
                                 )
                                 .body(ObjectUtil.mergeObjects(ObjectUtil.wrapObject("user", u),
                                                               new ResponseMessage("Đăng nhập thành công")
-                                      )
-                                );
+                                      , ObjectUtil.wrapObject("token", JwtUtil.generateToken(u))
+                                ));
                     }
                     else {
                         return ResponseEntity.ok()
