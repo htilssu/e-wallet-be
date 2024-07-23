@@ -15,15 +15,16 @@ import reactor.core.publisher.Mono;
 public class UserController {
 
     UserRepository userRepository;
+    BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @PostMapping("/register")
     public Mono<?> register(@RequestBody User user,
-                            BCryptPasswordEncoder bCryptPasswordEncoder) {
+            BCryptPasswordEncoder bCryptPasswordEncoder) {
 
         if (!UserValidator.isValidateUser(user)) {
             return Mono.just(ResponseEntity.badRequest()
-                                     .body(new ResponseMessage(
-                                             "Vui lòng kiểm tra lại thông tin")));
+                    .body(new ResponseMessage(
+                            "Vui lòng kiểm tra lại thông tin")));
         }
 
 
@@ -31,19 +32,21 @@ public class UserController {
 
 
         return foundedUser.map(u -> Mono.just(ResponseEntity.ok()
-                                                      .body(new ResponseMessage(
-                                                              "Người dùng đã tồn tại"))))
+                        .body(new ResponseMessage(
+                                "Người dùng đã tồn tại"))))
                 .switchIfEmpty(Mono.fromSupplier(() -> {
                     user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
 
 
                     return userRepository.save(user)
-                            .flatMap(savedEntity -> Mono.just(ResponseEntity.ok(new ResponseMessage(
-                                    "Đăng ký thành công"))))
-                            .onErrorResume(error -> Mono.just(ResponseEntity.ok()
-                                                                      .body(new ResponseMessage(
-                                                                              error.getCause()
-                                                                                      .getMessage()))));
+                            .flatMap(savedEntity -> Mono.just(
+                                    ResponseEntity.ok(new ResponseMessage(
+                                            "Đăng ký thành công"))))
+                            .onErrorResume(
+                                    error -> Mono.just(ResponseEntity.ok()
+                                            .body(new ResponseMessage(
+                                                    error.getCause()
+                                                            .getMessage()))));
                 }));
 
     }
@@ -55,6 +58,42 @@ public class UserController {
         return userMono.map(user -> {
             user.setPassword(null);
             return user;
+        });
+    }
+
+    @PostMapping("/password")
+    public Mono<ResponseEntity<ResponseMessage>> changePassword(@RequestBody ChangePasswordData passwordData,
+            Authentication authentication) {
+        final Mono<User> userMono = userRepository.findById((String) authentication.getPrincipal());
+
+        return userMono.flatMap(user -> {
+            if (passwordData.getOldPassword()
+                    .equals(passwordData.getNewPassword())) {
+                return Mono.just(ResponseEntity.badRequest()
+                        .body(new ResponseMessage(
+                                "Mật khẩu mới không được trùng với mật " +
+                                        "khẩu cũ")));
+            }
+
+            if (!bCryptPasswordEncoder.matches(passwordData.getOldPassword(), user.getPassword())) {
+                return Mono.just(ResponseEntity.badRequest()
+                        .body(new ResponseMessage(
+                                "Mật khẩu cũ không đúng")));
+            }
+
+            user.setPassword(bCryptPasswordEncoder.encode(passwordData.getNewPassword()));
+
+            return userRepository.save(user)
+                    .flatMap(savedEntity -> Mono
+                            .just(ResponseEntity
+                                    .ok()
+                                    .body(new ResponseMessage(
+                                            "Đổi mật khẩu thành công"))))
+                    .onErrorResume(error -> Mono
+                            .just(ResponseEntity
+                                    .badRequest()
+                                    .body(new ResponseMessage(
+                                            "Đổi mật khẩu thất bại"))));
         });
     }
 }
