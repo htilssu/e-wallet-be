@@ -12,7 +12,7 @@ public interface UserRepository extends ReactiveCrudRepository<User, String> {
     Mono<User> findByPhoneNumber(String phoneNumber);
 
 
-    @Query("update user set first_name = = :#{user.firstName}, last_name" +
+    @Query("update user set first_name = :#{user.firstName}, last_name" +
             " = :#{user.lastName}, email = :#{user.email}, password = :#{user.password}," +
             " phone_number = :#{user.phoneNumber}, address = :#{user.address}," +
             " city = :#{user.city}, country = :#{user.country}, dob = :#{user.dob}")

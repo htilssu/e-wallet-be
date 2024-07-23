@@ -1,26 +1,7 @@
 -- CREATE
 --     DATABASE ewallet;
 -- open the database
-
--- ENUM TYPE
-DROP TYPE IF EXISTS owner_type CASCADE;
-
-CREATE TYPE owner_type AS ENUM ('user', 'partner');
-
-DROP TYPE IF EXISTS transaction_type CASCADE;
-
-CREATE TYPE transaction_type AS ENUM ('deposit', 'withdrawal', 'transfer');
-
-DROP TYPE IF EXISTS transaction_target CASCADE;
-
-CREATE TYPE transaction_target AS ENUM ('wallet', 'group_fund');
-
-DROP TYPE IF EXISTS transaction_status CASCADE;
-
-CREATE TYPE transaction_status AS ENUM ('pending', 'completed', 'failed', 'funded');
-
-DROP TYPE IF EXISTS payment_system_type CASCADE;
-
+drop type if exists payment_system_type cascade;
 CREATE TYPE payment_system_type AS ENUM ('internal', 'paypal', 'stripe', 'other');
 
 DROP TABLE IF EXISTS wallet CASCADE;
@@ -28,11 +9,11 @@ DROP TABLE IF EXISTS wallet CASCADE;
 CREATE TABLE wallet
 (
     id         serial PRIMARY KEY,
-    owner_type owner_type NOT NULL DEFAULT 'user',
-    currency   VARCHAR(3) NOT NULL DEFAULT 'VND',
+    owner_type varchar(20) NOT NULL DEFAULT 'user',
+    currency   VARCHAR(3)  NOT NULL DEFAULT 'VND',
     owner_id   char(10),
-    balance    numeric    NOT NULL DEFAULT 0,
-    CONSTRAINT uk_wallet_owner UNIQUE (owner_type, owner_id)
+    balance    numeric     NOT NULL DEFAULT 0,
+    CONSTRAINT uk_wallet_owner UNIQUE (owner_id, owner_type)
 );
 
 CREATE OR REPLACE FUNCTION check_wallet_owner()
@@ -109,6 +90,7 @@ CREATE TABLE partner
     name         varchar(255) NOT NULL,
     description  text,
     email        VARCHAR(255) NOT NULL UNIQUE,
+    avatar       VARCHAR(255),
     password     VARCHAR(255) NOT NULL,
     api_base_url VARCHAR(255) NOT NULL,
     api_key      VARCHAR(255) NOT NULL,
@@ -157,7 +139,6 @@ CREATE TABLE "user"
     avatar       varchar(255) NULL,
     password     varchar(255) NOT NULL,
     dob          date         NOT NULL,
-
     is_active    boolean      NOT NULL            DEFAULT TRUE,
     is_verified  boolean      NOT NULL            DEFAULT FALSE,
     gender       boolean,
@@ -203,8 +184,6 @@ BEGIN
         END IF;
     end if;
 
-
-    NEW.id := LPAD(NEXTVAL('user_id_seq')::text, 10, '0');
 
     IF NEW.partner_id IS NOT NULL THEN
         IF EXISTS (SELECT 1 FROM "user" WHERE partner_id = new.partner_id AND email = NEW.email) THEN
@@ -260,7 +239,6 @@ CREATE TABLE employee
 );
 
 
-DROP TABLE IF EXISTS transaction CASCADE;
 DROP SEQUENCE IF EXISTS transaction_id_seq;
 
 
@@ -277,6 +255,7 @@ BEGIN
 END;
 $$;
 
+drop table if exists payment_system cascade;
 CREATE TABLE payment_system
 (
     id         SERIAL PRIMARY KEY,
@@ -286,23 +265,32 @@ CREATE TABLE payment_system
     api_secret VARCHAR(255),
     is_active  BOOLEAN DEFAULT true
 );
-
+DROP TABLE IF EXISTS transaction CASCADE;
 CREATE TABLE transaction
 (
-    id                 char(15) PRIMARY KEY        DEFAULT generate_transaction_id(),
-    money              decimal(10, 2)     NOT NULL,
-    currency           VARCHAR(3)         NOT NULL,
-    transaction_type   transaction_type   NOT NULL,
-    transaction_target transaction_target NOT NULL,
-    status             transaction_status NOT NULL DEFAULT 'pending',
-    timestamp          TIMESTAMP                   DEFAULT CURRENT_TIMESTAMP
+    id                 char(15) PRIMARY KEY    DEFAULT generate_transaction_id(),
+    money              decimal(10, 2) NOT NULL,
+    currency           VARCHAR(3)     NOT NULL default 'VND',
+    transaction_type   varchar(20)    NOT NULL default 'transfer',
+    transaction_target varchar(20)    NOT NULL default 'wallet',
+    status             varchar(50)    NOT NULL DEFAULT 'pending',
+    created            TIMESTAMP(3)   NOT NULL DEFAULT current_timestamp(3),
+    updated            TIMESTAMP(3)   NOT NULL DEFAULT current_timestamp(3)
 );
 
 
--- Order table
-DROP TABLE IF EXISTS "order" CASCADE;
+drop table if exists wallet_transaction;
+create table wallet_transaction
+(
+    id             char(15) PRIMARY KEY references transaction(id),
+    sender_wallet   serial references wallet (id),
+    receiver_wallet serial references wallet (id)
+);
 
-CREATE TABLE "order"
+-- Order table
+DROP TABLE IF EXISTS "payment_request" CASCADE;
+
+CREATE TABLE "payment_request"
 (
     id                      varchar(15) PRIMARY KEY,
     partner_id              char(10) REFERENCES partner (id),
@@ -310,7 +298,7 @@ CREATE TABLE "order"
     status                  varchar(50)    NOT NULL,
 --     invoice_id              varchar(50)    NULL UNIQUE,
     transaction_id          varchar(15)    NULL REFERENCES transaction (id),
-    voucher_id char(15) NULL,
+    voucher_id              char(15)       NULL,
     external_transaction_id SERIAL REFERENCES payment_system (id),
     created                 date           NOT NULL DEFAULT CURRENT_DATE,
     updated                 date           NOT NULL DEFAULT CURRENT_DATE,
@@ -337,7 +325,7 @@ $$;
 
 CREATE OR REPLACE TRIGGER order_id_trigger
     BEFORE INSERT
-    ON "order"
+    ON "payment_request"
     FOR EACH ROW
 EXECUTE FUNCTION generate_order_id();
 
@@ -351,7 +339,7 @@ $$
 BEGIN
     IF NEW.status <> OLD.status THEN
         IF NEW.status = 'SUCCESS' THEN
---     check count transaction with order if
+--     check count transaction with paymentRequest if
             IF (new.transaction_id IS NOT NULL) THEN
                 RETURN new;
                 ELSE
@@ -365,7 +353,7 @@ $$;*/
 
 /*CREATE OR REPLACE TRIGGER check_order_transaction
     BEFORE UPDATE OR INSERT
-    ON "order"
+    ON "paymentRequest"
     FOR EACH ROW
 EXECUTE FUNCTION check_order_transaction();*/
 

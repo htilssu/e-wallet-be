@@ -5,21 +5,77 @@ info:
   version: 1.0.0
 
 servers:
-  - url: 'https://localhost:8080/api/{version}'
+  - url: 'https://api.htilssu.com/api/{version}'
     variables:
       version:
         default: 'v1'
         description: 'API version'
 paths:
-  /auth/login:
+  /api/v1/user/:
     get:
+      tags:
+        - user
+      summary: "GET api/v1/user/"
+      operationId: "getUser"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/User"
+  /auth/login:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
       tags:
         - auth
       description: endpoint dùng để đăng nhập vào hệ thống
       responses:
+        401:
+          description: Đăng nhập không thành công
+          content:
+            application/json:
+              schema:
+                default:
+                    message: "Đăng nhập không thành công"
         200:
           description: Đăng nhập thành công
           content:
             application/json:
-              example: 
-  
+              schema:
+                default:
+                  user:
+                    id: "1000000002"
+                    userName: "jro8thegn_d"
+                    firstName: "John"
+                    lastName: "Doe"
+                    email: "john.d6ore@3ery34.com"
+                    password: null
+                    phoneNumber: "1047778979"
+                    address: "123 Main St"
+                    dob: [
+                      2004,
+                      1,
+                      1
+                    ]
+                    gender: true,
+                    created: [
+                      2024,
+                      7,
+                      4
+                    ]
+                    job: "Engineer"
+                    partnerId: null
+                    active: false
+                    verified: false
+                  message: "Đăng nhập thành công"
+                  token: "eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.eyJzdWIiOiIxMDAwMDAwMDAyIiwiZXhwIjoxNzIxNjY3Mzc2fQ."

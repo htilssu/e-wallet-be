@@ -1,6 +1,5 @@
-package com.ewallet.ewallet.model;
+package com.ewallet.ewallet.model.response;
 
-import com.ewallet.ewallet.order.Order;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;

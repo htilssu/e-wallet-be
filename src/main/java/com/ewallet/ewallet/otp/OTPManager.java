@@ -2,6 +2,7 @@ package com.ewallet.ewallet.otp;
 
 import com.ewallet.ewallet.service.EmailService;
 import com.ewallet.ewallet.service.otp.OTPGenerator;
+import com.ewallet.ewallet.service.otp.OTPUtil;
 import com.ewallet.ewallet.service.otp.SmsService;
 import com.ewallet.ewallet.util.DateTimeUtil;
 import lombok.AllArgsConstructor;
@@ -11,12 +12,15 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
-@Service
 @AllArgsConstructor
+@Service
 public class OTPManager {
 
+    final
     OTPGenerator otpGenerator;
+    final
     ClaimOTPRepository claimOTPRepository;
+    //ignore autowired expire time
 
     /**
      * Gửi mã OTP cho người dùng, thông tin người nhận sẽ được lấy từ {@link OTPData#getSendTo()}
@@ -35,12 +39,14 @@ public class OTPManager {
             ClaimOTPModel claim = new ClaimOTPModel(otp,
                                                     authentication.getPrincipal().toString(),
                                                     DateTimeUtil.convertToString(
-                                                            Instant.now().plus(30, ChronoUnit.MINUTES))
+                                                            Instant.now()
+                                                                    .plus(OTPUtil.getExpiryTime(),
+                                                                          ChronoUnit.SECONDS
+                                                                    ))
             );
 
             claimOTPRepository.save(claim).join(); //save
         });
-
 
     }
 
@@ -56,4 +62,5 @@ public class OTPManager {
         if (userClaim.isExpired()) return false;
         return otpData.getOtp().equals(userClaim.getOtp());
     }
+
 }

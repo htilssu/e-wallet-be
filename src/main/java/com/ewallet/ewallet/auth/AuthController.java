@@ -1,12 +1,11 @@
 package com.ewallet.ewallet.auth;
 
-import com.ewallet.ewallet.model.ResponseMessage;
+import com.ewallet.ewallet.model.response.ResponseMessage;
 import com.ewallet.ewallet.user.User;
 import com.ewallet.ewallet.user.UserRepository;
 import com.ewallet.ewallet.util.JwtUtil;
 import com.ewallet.ewallet.util.ObjectUtil;
 import com.ewallet.ewallet.validator.EmailValidator;
-import com.ewallet.ewallet.validator.UserValidator;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -53,7 +52,7 @@ public class AuthController {
                                 )
                                 .body(ObjectUtil.mergeObjects(ObjectUtil.wrapObject("user", u),
                                                               new ResponseMessage("Đăng nhập thành công")
-                                      , ObjectUtil.wrapObject("token", JwtUtil.generateToken(u))
+                                        , ObjectUtil.wrapObject("token", JwtUtil.generateToken(u))
                                 ));
                     }
                     else {

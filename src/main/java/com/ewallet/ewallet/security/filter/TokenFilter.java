@@ -47,7 +47,9 @@ public class TokenFilter implements Filter {
 
             var authorities = Collections.singleton(new SimpleGrantedAuthority("ROLE_USER"));
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                    decodedJWT.getSubject(), null, authorities);
+                    decodedJWT.getSubject(), token, authorities);
+
+            authenticationToken.setDetails(decodedJWT.getSubject());
 
             context.setAuthentication(authenticationToken);
             contextHolder.setContext(context);
@@ -57,12 +59,6 @@ public class TokenFilter implements Filter {
     }
 
     private String setResponseHeader(HttpServletRequest request, HttpServletResponse response) {
-//        response.setHeader("Access-Control-Allow-Origin", request.getHeader("Origin"));
-//        response.setHeader("Access-Control-Allow-Credentials", "true");
-//        response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PUT");
-//        response.setHeader("Access-Control-Max-Age", "3600");
-//        response.setHeader("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With, remember-me, Authorization");
-
         return request.getHeader("Authorization");
     }
 }

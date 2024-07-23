@@ -1,6 +1,6 @@
 package com.ewallet.ewallet.user;
 
-import com.ewallet.ewallet.model.ResponseMessage;
+import com.ewallet.ewallet.model.response.ResponseMessage;
 import com.ewallet.ewallet.validator.UserValidator;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -42,13 +42,19 @@ public class UserController {
                                     "Đăng ký thành công"))))
                             .onErrorResume(error -> Mono.just(ResponseEntity.ok()
                                                                       .body(new ResponseMessage(
-                                                                              error.getCause().getMessage()))));
+                                                                              error.getCause()
+                                                                                      .getMessage()))));
                 }));
 
     }
 
-    @GetMapping("/")
+    @GetMapping()
     public Mono<User> getUser(Authentication authentication) {
-        return userRepository.findById(authentication.getName());
+        final Mono<User> userMono = userRepository.findById((String) authentication.getPrincipal());
+
+        return userMono.map(user -> {
+            user.setPassword(null);
+            return user;
+        });
     }
 }

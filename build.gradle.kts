@@ -45,6 +45,8 @@ dependencies {
 
     implementation ("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
     implementation("com.google.guava:guava:33.2.1-jre")
+    implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
+    implementation ("com.google.code.gson:gson:2.11.0")
 
 
     //dynamodb

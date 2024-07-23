@@ -1,9 +1,10 @@
 package com.ewallet.ewallet.otp;
 
-import com.ewallet.ewallet.model.ResponseMessage;
+import com.ewallet.ewallet.model.response.ResponseMessage;
 import com.ewallet.ewallet.service.EmailService;
+import com.ewallet.ewallet.service.otp.OTPUtil;
 import com.ewallet.ewallet.service.otp.SmsService;
-import com.ewallet.ewallet.util.AuthUtil;
+import com.ewallet.ewallet.util.ObjectUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
@@ -24,8 +25,8 @@ public class OTPController {
     SmsService smsService;
 
     @PostMapping
-    public Mono<ResponseEntity<ResponseMessage>> sendOtp(@RequestBody @Nullable OTPData otpdata,
-                                                         Authentication authentication) {
+    public Mono<ResponseEntity<?>> sendOtp(@RequestBody @Nullable OTPData otpdata,
+                                           Authentication authentication) {
 
         if (otpdata == null) {
             return Mono.just(ResponseEntity.badRequest()
@@ -36,8 +37,16 @@ public class OTPController {
             case "email" -> {
                 otpManager.send(emailService, otpdata, authentication);
                 return Mono.just(ResponseEntity.ok()
-                                         .body(new ResponseMessage(
-                                                 "OTP đã được gửi đến email của bạn!")));
+                                         .body(ObjectUtil.mergeObjects(new ResponseMessage(
+                                                                               "OTP đã được gửi đến email của bạn!"),
+                                                                       ObjectUtil.wrapObject("email",
+                                                                                             otpdata.getSendTo()
+                                                                       ),
+                                                                       ObjectUtil.wrapObject(
+                                                                               "expire",
+                                                                               OTPUtil.getExpiryTime()
+                                                                       )
+                                         )));
             }
 
             case "phone" -> {
@@ -56,9 +65,10 @@ public class OTPController {
     }
 
     @PostMapping("/verify")
-    public Mono<ResponseEntity<ResponseMessage>> verifyOtp(@RequestBody OTPData otpData, Authentication authentication) {
+    public Mono<ResponseEntity<ResponseMessage>> verifyOtp(@RequestBody OTPData otpData,
+                                                           Authentication authentication) {
         if (authentication != null) {
-            var userId = (String) authentication.getPrincipal() ;
+            var userId = (String) authentication.getPrincipal();
             boolean verifyStatus = otpManager.verify(userId, otpData);
 
             if (verifyStatus)
