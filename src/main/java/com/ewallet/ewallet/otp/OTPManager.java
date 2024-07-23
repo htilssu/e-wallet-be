@@ -37,12 +37,12 @@ public class OTPManager {
         otpGenerator.generateOTP().thenAccept(otp -> {
             otpSender.sendOTP(otpData.getSendTo(), otp);
             ClaimOTPModel claim = new ClaimOTPModel(otp,
-                                                    authentication.getPrincipal().toString(),
-                                                    DateTimeUtil.convertToString(
-                                                            Instant.now()
-                                                                    .plus(OTPUtil.getExpiryTime(),
-                                                                          ChronoUnit.SECONDS
-                                                                    ))
+                    authentication.getPrincipal().toString(),
+                    DateTimeUtil.convertToString(
+                            Instant.now()
+                                    .plus(OTPUtil.getExpiryTime(),
+                                            ChronoUnit.SECONDS
+                                    ))
             );
 
             claimOTPRepository.save(claim).join(); //save

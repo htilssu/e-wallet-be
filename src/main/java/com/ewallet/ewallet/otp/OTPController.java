@@ -26,35 +26,35 @@ public class OTPController {
 
     @PostMapping
     public Mono<ResponseEntity<?>> sendOtp(@RequestBody @Nullable OTPData otpdata,
-                                           Authentication authentication) {
+            Authentication authentication) {
 
         if (otpdata == null) {
             return Mono.just(ResponseEntity.badRequest()
-                                     .body(new ResponseMessage("Data is invalid")));
+                    .body(new ResponseMessage("Data is invalid")));
         }
 
         switch (otpdata.getOtpType()) {
             case "email" -> {
                 otpManager.send(emailService, otpdata, authentication);
                 return Mono.just(ResponseEntity.ok()
-                                         .body(ObjectUtil.mergeObjects(new ResponseMessage(
-                                                                               "OTP đã được gửi đến email của bạn!"),
-                                                                       ObjectUtil.wrapObject("email",
-                                                                                             otpdata.getSendTo()
-                                                                       ),
-                                                                       ObjectUtil.wrapObject(
-                                                                               "expire",
-                                                                               OTPUtil.getExpiryTime()
-                                                                       )
-                                         )));
+                        .body(ObjectUtil.mergeObjects(new ResponseMessage(
+                                        "OTP đã được gửi đến email của bạn!"),
+                                ObjectUtil.wrapObject("email",
+                                        otpdata.getSendTo()
+                                ),
+                                ObjectUtil.wrapObject(
+                                        "expire",
+                                        OTPUtil.getExpiryTime()
+                                )
+                        )));
             }
 
             case "phone" -> {
 
                 otpManager.send(smsService, otpdata, authentication);
                 return Mono.just(ResponseEntity.ok()
-                                         .body(new ResponseMessage(
-                                                 "OTP đã được gửi đến số điện thoại của bạn!")));
+                        .body(new ResponseMessage(
+                                "OTP đã được gửi đến số điện thoại của bạn!")));
             }
             default -> {
                 return Mono.just(ResponseEntity.badRequest().body(new ResponseMessage(
@@ -66,21 +66,21 @@ public class OTPController {
 
     @PostMapping("/verify")
     public Mono<ResponseEntity<ResponseMessage>> verifyOtp(@RequestBody OTPData otpData,
-                                                           Authentication authentication) {
+            Authentication authentication) {
         if (authentication != null) {
             var userId = (String) authentication.getPrincipal();
             boolean verifyStatus = otpManager.verify(userId, otpData);
 
             if (verifyStatus)
                 return Mono.just(ResponseEntity.ok()
-                                         .body(new ResponseMessage("Mã OTP hợp lệ")));
+                        .body(new ResponseMessage("Mã OTP hợp lệ")));
 
             return Mono.just(ResponseEntity.badRequest()
-                                     .body(new ResponseMessage("Mã OTP không hợp lệ")));
+                    .body(new ResponseMessage("Mã OTP không hợp lệ")));
         }
 
 
         return Mono.just(ResponseEntity.badRequest()
-                                 .body(new ResponseMessage("Người dùng không hợp lệ")));
+                .body(new ResponseMessage("Người dùng không hợp lệ")));
     }
 }

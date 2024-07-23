@@ -23,10 +23,10 @@ public class ApiServiceFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest request,
-                         ServletResponse response,
-                         FilterChain chain) throws
-                                            IOException,
-                                            ServletException {
+            ServletResponse response,
+            FilterChain chain) throws
+                               IOException,
+                               ServletException {
         var req = (HttpServletRequest) request;
         var apiKey = req.getHeader("X-Api");
 
@@ -50,7 +50,8 @@ public class ApiServiceFilter implements Filter {
 
             if (authentication == null) {
                 context.setAuthentication(new UsernamePasswordAuthenticationToken(partner
-                        , apiKey, Collections.singleton(new SimpleGrantedAuthority("ROLE_PARTNER"))));
+                        , apiKey,
+                        Collections.singleton(new SimpleGrantedAuthority("ROLE_PARTNER"))));
             }
 
             req.setAttribute("partner", partner);

@@ -85,8 +85,7 @@ public class UserController {
 
             return userRepository.save(user)
                     .flatMap(savedEntity -> Mono
-                            .just(ResponseEntity
-                                    .ok()
+                            .just(ResponseEntity.ok()
                                     .body(new ResponseMessage(
                                             "Đổi mật khẩu thành công"))))
                     .onErrorResume(error -> Mono

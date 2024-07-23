@@ -18,12 +18,12 @@ public class TokenFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest request,
-                         ServletResponse response,
-                         FilterChain chain) throws ServletException, IOException {
+            ServletResponse response,
+            FilterChain chain) throws ServletException, IOException {
 
 
         var authorizationContent = setResponseHeader((HttpServletRequest) request,
-                                                     (HttpServletResponse) response
+                (HttpServletResponse) response
         );
 
         if (authorizationContent == null || !authorizationContent.startsWith("Bearer ")) {
@@ -42,12 +42,14 @@ public class TokenFilter implements Filter {
                 return;
             }
 
-            SecurityContextHolderStrategy contextHolder = SecurityContextHolder.getContextHolderStrategy();
+            SecurityContextHolderStrategy contextHolder =
+                    SecurityContextHolder.getContextHolderStrategy();
             SecurityContext context = SecurityContextHolder.createEmptyContext();
 
             var authorities = Collections.singleton(new SimpleGrantedAuthority("ROLE_USER"));
-            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                    decodedJWT.getSubject(), token, authorities);
+            UsernamePasswordAuthenticationToken authenticationToken =
+                    new UsernamePasswordAuthenticationToken(
+                            decodedJWT.getSubject(), token, authorities);
 
             authenticationToken.setDetails(decodedJWT.getSubject());
 

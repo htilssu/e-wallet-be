@@ -4,9 +4,7 @@ import com.ewallet.ewallet.otp.ClaimOTPModel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
@@ -14,7 +12,6 @@ import software.amazon.awssdk.auth.credentials.AwsCredentials;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbAsyncTable;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedAsyncClient;
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
-import software.amazon.awssdk.enhanced.dynamodb.mapper.StaticAttributeTag;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.StaticAttributeTags;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.StaticTableSchema;
 import software.amazon.awssdk.regions.Region;
@@ -53,7 +50,7 @@ public class DynamoDbConfiguration {
     public DynamoDbAsyncTable<ClaimOTPModel> claimOTPModelDynamoDbAsyncTable() throws
                                                                                URISyntaxException {
         var claimOtpModel = dynamoDbEnhancedAsyncClient().table("claim_otp",
-                                                                claimOTPModelTableSchema()
+                claimOTPModelTableSchema()
         );
         claimOtpModel.createTable().thenAccept(unused -> {
             System.out.println("Table created");
@@ -74,7 +71,8 @@ public class DynamoDbConfiguration {
                 .addAttribute(String.class, a -> {
                     a.name("userId")
                             .getter(ClaimOTPModel::getUserId)
-                            .setter(ClaimOTPModel::setUserId).tags(StaticAttributeTags.primaryPartitionKey());
+                            .setter(ClaimOTPModel::setUserId).tags(
+                                    StaticAttributeTags.primaryPartitionKey());
                 })
                 .addAttribute(String.class, a -> {
                     a.name("otp")

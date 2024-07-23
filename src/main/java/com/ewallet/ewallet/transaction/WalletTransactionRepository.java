@@ -9,7 +9,7 @@ public interface WalletTransactionRepository
 
     @Query("INSERT INTO wallet_transaction (id, sender_wallet, receiver_wallet) VALUES " +
             "(:#{#walletTransaction.getId()}, :#{#walletTransaction.getSenderWallet()}, " +
-            ":#{#walletTransaction.getReceiverWallet()})" )
+            ":#{#walletTransaction.getReceiverWallet()})")
     Mono<WalletTransaction> insert(WalletTransaction walletTransaction);
 
 }

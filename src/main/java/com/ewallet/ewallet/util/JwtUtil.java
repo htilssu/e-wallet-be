@@ -21,17 +21,17 @@ public class JwtUtil {
     private static final int expire = 60 * 24;
     private static Algorithm algorithm = Algorithm.none();
     private static JWTVerifier verifier = JWT.require(algorithm)
-                                             .build();
+            .build();
     private static String secret;
 
     public static String generateToken(User user) {
         //convert user to json
         return JWT.create()
-                  .withSubject(user.getId())
-                  .withPayload(ObjectUtil.parseJson(user))
-                  .withExpiresAt(Date.from(Instant.now()
-                                                  .plus(expire, ChronoUnit.MINUTES)))
-                  .sign(algorithm);
+                .withSubject(user.getId())
+                .withPayload(ObjectUtil.parseJson(user))
+                .withExpiresAt(Date.from(Instant.now()
+                        .plus(expire, ChronoUnit.MINUTES)))
+                .sign(algorithm);
 
     }
 
@@ -47,18 +47,18 @@ public class JwtUtil {
         newPartner.setPassword(null);
 
         return JWT.create()
-                  .withSubject(newPartner.getId())
-                  .withPayload(ObjectUtil.parseJson(newPartner))
-                  .withExpiresAt(Date.from(Instant.now()
-                                                  .plus(expire, ChronoUnit.MINUTES)))
-                  .sign(algorithm);
+                .withSubject(newPartner.getId())
+                .withPayload(ObjectUtil.parseJson(newPartner))
+                .withExpiresAt(Date.from(Instant.now()
+                        .plus(expire, ChronoUnit.MINUTES)))
+                .sign(algorithm);
     }
 
     @PostConstruct
     public void init() {
         algorithm = Algorithm.none();
         verifier = JWT.require(algorithm)
-                      .build();
+                .build();
     }
 
 }

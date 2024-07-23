@@ -17,13 +17,15 @@ import java.time.temporal.ChronoUnit;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ClaimOTPModel {
+
     private String otp;
     @Getter(onMethod_ = @DynamoDbPartitionKey)
     private String userId;
-    private String expiredAt = DateTimeUtil.convertToString(Instant.now().plus(1,ChronoUnit.HOURS));
+    private String expiredAt = DateTimeUtil.convertToString(
+            Instant.now().plus(1, ChronoUnit.HOURS));
 
     @DynamoDbIgnore
-    public Boolean isExpired(){
+    public Boolean isExpired() {
         return Instant.now().isAfter(DateTimeUtil.convertToDate(expiredAt).toInstant());
     }
 }

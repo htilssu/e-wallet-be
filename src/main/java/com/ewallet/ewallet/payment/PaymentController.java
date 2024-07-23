@@ -4,7 +4,7 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 @RestController()
-@RequestMapping("api/v{version}/payment")
+@RequestMapping("api/v?/payment")
 public class PaymentController {
 
     @GetMapping("/{id}")
@@ -14,7 +14,8 @@ public class PaymentController {
 
     @PostMapping()
     public Mono<String> createPayment(@RequestBody PaymentModel paymentModel) {
-        return Mono.justOrEmpty("Payment made for id: " + paymentModel.id + " with amount: " + paymentModel.amount);
+        return Mono.justOrEmpty(
+                "Payment made for id: " + paymentModel.id + " with amount: " + paymentModel.amount);
     }
 
 }

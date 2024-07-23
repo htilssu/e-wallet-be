@@ -10,6 +10,7 @@ import org.springframework.http.converter.json.GsonHttpMessageConverter;
 
 @Configuration
 public class JsonSerialization {
+
     @Bean
     public ObjectMapper objectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();

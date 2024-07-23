@@ -4,12 +4,9 @@ import com.ewallet.ewallet.security.filter.ApiServiceFilter;
 import com.ewallet.ewallet.security.filter.TokenFilter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.gson.GsonAutoConfiguration;
-import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -37,26 +34,26 @@ public class EWalletApplication {
             ApiServiceFilter apiServiceFilter) throws
                                                Exception {
         http.formLogin(AbstractHttpConfigurer::disable)
-            .logout(AbstractHttpConfigurer::disable)
-            .csrf(AbstractHttpConfigurer::disable)
-            .sessionManagement(session ->
-                    session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+                .logout(AbstractHttpConfigurer::disable)
+                .csrf(AbstractHttpConfigurer::disable)
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
 
         http.authorizeHttpRequests(auth -> auth.requestMatchers("/api/v?/auth/**",
-                                                       "/api/v?/user/register",
-                                                       "/api/v?/partner/register"
-                                               )
-                                               .permitAll()
-                                               .requestMatchers("/api/v?/user/**")
-                                               .hasRole("USER")
-                                               .requestMatchers("/api/v?/partner/**",
-                                                       "/api/v?/order/**")
-                                               .hasRole("PARTNER")
-                                               .requestMatchers("/api/v?/admin/**")
-                                               .hasRole("ADMIN")
-                                               .anyRequest()
-                                               .fullyAuthenticated());
+                        "/api/v?/user/register",
+                        "/api/v?/partner/register"
+                )
+                .permitAll()
+                .requestMatchers("/api/v?/user/**")
+                .hasRole("USER")
+                .requestMatchers("/api/v?/partner/**",
+                        "/api/v?/order/**")
+                .hasRole("PARTNER")
+                .requestMatchers("/api/v?/admin/**")
+                .hasRole("ADMIN")
+                .anyRequest()
+                .fullyAuthenticated());
 
 
         //add token filter to security filter chain
