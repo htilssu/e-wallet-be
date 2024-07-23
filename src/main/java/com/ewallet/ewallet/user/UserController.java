@@ -2,6 +2,8 @@ package com.ewallet.ewallet.user;
 
 import com.ewallet.ewallet.model.response.ResponseMessage;
 import com.ewallet.ewallet.validator.UserValidator;
+import com.ewallet.ewallet.wallet.Wallet;
+import com.ewallet.ewallet.wallet.WalletRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -15,6 +17,7 @@ import reactor.core.publisher.Mono;
 public class UserController {
 
     UserRepository userRepository;
+    WalletRepository walletRepository;
     BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @PostMapping("/register")
@@ -59,6 +62,16 @@ public class UserController {
             user.setPassword(null);
             return user;
         });
+    }
+
+    @GetMapping("/wallet")
+    public Mono<?> getWallet(Authentication authentication) {
+        final Mono<Wallet> user = walletRepository.findByOwnerIdAndOwnerType(
+                (String) authentication.getPrincipal(), "user");
+
+        return user.map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound()
+                        .build());
     }
 
     @PostMapping("/password")
