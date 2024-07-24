@@ -6,14 +6,13 @@ import com.ewallet.ewallet.util.JwtUtil;
 import com.ewallet.ewallet.util.ObjectUtil;
 import com.ewallet.ewallet.validator.EmailValidator;
 import com.ewallet.ewallet.validator.PartnerValidator;
+import jakarta.mail.Part;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 @Data
@@ -67,5 +66,10 @@ public class PartnerController {
                                         new ResponseMessage(
                                                 "Đăng ký thất bại")))));
 
+    }
+    
+    @GetMapping
+    public Mono<Partner> getPartner(Authentication authentication){
+        return Mono.just(((Partner) authentication.getPrincipal()));
     }
 }

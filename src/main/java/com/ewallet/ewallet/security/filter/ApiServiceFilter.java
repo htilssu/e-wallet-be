@@ -40,6 +40,7 @@ public class ApiServiceFilter implements Filter {
         Partner partner = null;
         try {
             partner = partnerRepository.getPartnerByApiKey(apiKey).block();
+            if (partner != null) partner.setPassword(null);
         } catch (RuntimeException r) {
             System.out.println("Error: " + r.getMessage());
         }

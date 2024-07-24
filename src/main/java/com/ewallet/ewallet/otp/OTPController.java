@@ -77,7 +77,7 @@ public class OTPController {
                 return Mono.just(ResponseEntity.ok()
                         .body(new ResponseMessage("Mã OTP hợp lệ")));
 
-            return Mono.just(ResponseEntity.badRequest()
+            return Mono.just(ResponseEntity.status(401)
                     .body(new ResponseMessage("Mã OTP không hợp lệ")));
         }
 

@@ -169,9 +169,6 @@ CREATE OR REPLACE FUNCTION check_user_unique()
 AS
 $$
 BEGIN
-
-    --     raise exception 'partner_id %', NEW.partner_id;
-
     IF NEW.partner_id ISNULL THEN
         IF EXISTS (SELECT 1 FROM "user" WHERE partner_id ISNULL AND email = NEW.email) THEN
             RAISE EXCEPTION 'Email đã tồn tại';
@@ -282,26 +279,42 @@ CREATE TABLE transaction
 drop table if exists wallet_transaction;
 create table wallet_transaction
 (
-    id             char(15) PRIMARY KEY references transaction(id),
+    id              char(15) PRIMARY KEY references transaction (id),
     sender_wallet   serial references wallet (id),
     receiver_wallet serial references wallet (id)
 );
 
 -- Order table
+drop sequence if exists payment_request_id;
+create sequence payment_request_id start 100000000000000;
+
+create or replace function generate_payment_request_id() returns varchar(15)
+as
+$$
+begin
+    return LPAD(NEXTVAL('payment_request_id')::text, 15, '0');
+end;
+$$
+    language plpgsql;
+
+
 DROP TABLE IF EXISTS "payment_request" CASCADE;
 
 CREATE TABLE "payment_request"
 (
-    id                      varchar(15) PRIMARY KEY,
+    id                      varchar(15) PRIMARY KEY default generate_payment_request_id(),
     partner_id              char(10) REFERENCES partner (id),
     money                   decimal(10, 2) NOT NULL,
-    status                  varchar(50)    NOT NULL,
+    status                  varchar(50)    NOT NULL default 'pending',
 --     invoice_id              varchar(50)    NULL UNIQUE,
     transaction_id          varchar(15)    NULL REFERENCES transaction (id),
-    voucher_id              char(15)       NULL,
-    external_transaction_id SERIAL REFERENCES payment_system (id),
-    created                 date           NOT NULL DEFAULT CURRENT_DATE,
-    updated                 date           NOT NULL DEFAULT CURRENT_DATE,
+    voucher_id              varchar(50)    NULL,
+    voucher_name            varchar(100)   NULL,
+    voucher_code            varchar(100)   NULL,
+    voucher_discount        numeric(10, 2) NULL,
+    external_transaction_id varchar(50)    NULL,
+    created                 timestamp           NOT NULL DEFAULT current_timestamp,
+    updated                 timestamp        NOT NULL DEFAULT current_timestamp,
     unique (external_transaction_id),
     unique (transaction_id),
     unique (id, partner_id)
@@ -328,36 +341,6 @@ CREATE OR REPLACE TRIGGER order_id_trigger
     ON "payment_request"
     FOR EACH ROW
 EXECUTE FUNCTION generate_order_id();
-
-/*
-CREATE OR REPLACE FUNCTION check_order_transaction()
-    RETURNS TRIGGER
-    LANGUAGE plpgsql
-AS
-$$
-
-BEGIN
-    IF NEW.status <> OLD.status THEN
-        IF NEW.status = 'SUCCESS' THEN
---     check count transaction with paymentRequest if
-            IF (new.transaction_id IS NOT NULL) THEN
-                RETURN new;
-                ELSE
-                    RAISE EXCEPTION 'Đơn hàng chưa được thanh toán, không thể chuyển trạng thái thành công';
-                END IF;
-            END IF;
-        END IF;
-    RETURN NEW;
-END;
-$$;*/
-
-/*CREATE OR REPLACE TRIGGER check_order_transaction
-    BEFORE UPDATE OR INSERT
-    ON "paymentRequest"
-    FOR EACH ROW
-EXECUTE FUNCTION check_order_transaction();*/
-
--- Transaction table
 
 -- Support Ticket
 DROP TABLE IF EXISTS support_ticket CASCADE;
@@ -457,3 +440,8 @@ CREATE TABLE group_fund_transaction
     money          numeric NOT NULL,
     created        date    NOT NULL DEFAULT CURRENT_DATE
 );
+
+
+
+create index wallet_transaction_sd_idx on wallet_transaction (sender_wallet);
+create index wallet_transaction_rc_idx on wallet_transaction (receiver_wallet);

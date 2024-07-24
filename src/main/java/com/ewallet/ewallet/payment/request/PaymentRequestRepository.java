@@ -6,6 +6,4 @@ import reactor.core.publisher.Mono;
 
 public interface PaymentRequestRepository extends ReactiveCrudRepository<PaymentRequest,String> {
 
-    @Override
-    Mono<PaymentRequest> findById(@NotNull String s);
 }

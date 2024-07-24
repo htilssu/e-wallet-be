@@ -5,6 +5,7 @@ plugins {
 }
 val springCloudVersion by extra("2023.0.2")
 
+
 group = "com.ewallet"
 version = "0.0.1-SNAPSHOT"
 
