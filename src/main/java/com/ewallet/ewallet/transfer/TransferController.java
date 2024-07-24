@@ -35,14 +35,14 @@ public class TransferController {
             Authentication authentication) {
         if (data.getMoney() <= 0) {
             return Mono.just(ResponseEntity.badRequest()
-                                           .body(new ResponseMessage("Số tiền phải lớn hơn 0")));
+                    .body(new ResponseMessage("Số tiền phải lớn hơn 0")));
         }
 
         if (data.getSendTo()
                 .isEmpty()) {
             return Mono.just(ResponseEntity.badRequest()
-                                           .body(new ResponseMessage(
-                                                   "Người nhận không được để trống")));
+                    .body(new ResponseMessage(
+                            "Người nhận không được để trống")));
         }
 
         String senderId = authentication.getName();
@@ -51,7 +51,8 @@ public class TransferController {
                 .findByOwnerIdAndOwnerType(senderId, "user")
                 .flatMap(wallet -> checkWalletBalance(wallet, data.getMoney()))
                 .switchIfEmpty(
-                        Mono.error(new ReceiverNotFoundException("Không tìm thấy ví của bạn")))
+                        Mono.error(
+                                new ReceiverNotFoundException("Không tìm thấy ví của bạn")))
                 .flatMap(wallet -> userRepository
                         .findByEmail(data.sendTo)
                         .switchIfEmpty(Mono.error(
@@ -61,7 +62,8 @@ public class TransferController {
                                         user.getId(),
                                         "user"))
                         .switchIfEmpty(Mono.error(
-                                new ReceiverNotFoundException("Không tìm thấy ví người nhận")))
+                                new ReceiverNotFoundException(
+                                        "Không tìm thấy ví người nhận")))
                         .flatMap(receiverWallet -> {
                             wallet.sendMoneyTo(
                                     receiverWallet,
@@ -82,17 +84,17 @@ public class TransferController {
                                             receiverWallet.getId()
                                     );
                             return walletRepository.saveAll(
-                                                           List.of(wallet,
-                                                                   receiverWallet))
-                                                   .then(responseEntityMono);
+                                            List.of(wallet,
+                                                    receiverWallet))
+                                    .then(responseEntityMono);
 
                         })
-                        .onErrorResume(throwable -> Mono.just(
-                                        ResponseEntity.badRequest()
-                                                      .body(new ResponseMessage(
-                                                              throwable.getMessage())
-                                                      )
-                                )
+
+                ).onErrorResume(throwable -> Mono.just(
+                                ResponseEntity.badRequest()
+                                        .body(new ResponseMessage(
+                                                throwable.getMessage())
+                                        )
                         )
                 );
     }
