@@ -21,49 +21,44 @@ public class AuthController {
 
     @PostMapping("/login")
     public Mono<ResponseEntity<?>> login(@RequestBody AuthData user,
-                                         BCryptPasswordEncoder bCryptPasswordEncoder) {
+            BCryptPasswordEncoder bCryptPasswordEncoder) {
 
         if (user.getUsername() == null || user.getPassword() == null) {
-            return Mono.just(ResponseEntity.ok()
-                                     .body(new ResponseMessage(
-                                             "Đăng nhập thất bại, vui lòng kiểm tra lại thông tin")));
+            return Mono.just(ResponseEntity.ok().body(new ResponseMessage(
+                    "Đăng nhập thất bại, vui lòng kiểm tra lại thông tin")));
         }
 
         if (!EmailValidator.isValid(user.getUsername())) {
-            return Mono.just(ResponseEntity.ok()
-                                     .body(new ResponseMessage(
-                                             "Đăng nhập thất bại, vui lòng kiểm tra lại thông tin")));
+            return Mono.just(ResponseEntity.ok().body(new ResponseMessage(
+                    "Đăng nhập thất bại, vui lòng kiểm tra lại thông tin")));
         }
 
-        final Mono<User> foundedUser = userRepository.findByEmail(user.getUsername()); //login by email
+        final Mono<User> foundedUser = userRepository.findByEmail(
+                user.getUsername()); //login by email
 
 
         return foundedUser.map(u -> {
-                    if (u == null) {
-                        return ResponseEntity.status(200)
-                                .body(new ResponseMessage("Người dùng không tồn tại"));
-                    }
+            if (u == null) {
+                return ResponseEntity.status(200).body(
+                        new ResponseMessage("Người dùng không tồn tại"));
+            }
 
-                    if (bCryptPasswordEncoder.matches(user.getPassword(), u.getPassword())) {
-                        u.setPassword(null);
-                        return ResponseEntity.status(200)
-                                .header("Set-Cookie",
-                                        "token=" + JwtUtil.generateToken(u) + "; Path=/; SameSite=None; Secure; Partitioned; Max-Age=99999;"
-                                )
-                                .body(ObjectUtil.mergeObjects(ObjectUtil.wrapObject("user", u),
-                                                              new ResponseMessage("Đăng nhập thành công")
-                                        , ObjectUtil.wrapObject("token", JwtUtil.generateToken(u))
-                                ));
-                    }
-                    else {
-                        return ResponseEntity.ok()
-                                .body(new ResponseMessage(
-                                        "Mật khẩu không đúng"));
-                    }
-                })
-                .switchIfEmpty(Mono.defer(() -> Mono.just(ResponseEntity.ok(new ResponseMessage(
-                        "Tài khoản không tồn tại trong hệ thống"))))); // if not exist any user
-
+            if (bCryptPasswordEncoder.matches(user.getPassword(), u.getPassword())) {
+                u.setPassword(null);
+                return ResponseEntity.status(200).header("Set-Cookie",
+                                "token=" + JwtUtil.generateToken(
+                                        u) + "; Path=/; SameSite=None; Secure; " + "Partitioned; " +
+                                        "Max-Age=99999;")
+                        .body(ObjectUtil.mergeObjects(ObjectUtil.wrapObject("user", u),
+                                new ResponseMessage("Đăng nhập thành công"),
+                                ObjectUtil.wrapObject("token", JwtUtil.generateToken(u))));
+            }
+            else {
+                return ResponseEntity.status(401).body(new ResponseMessage("Mật khẩu không đúng"));
+            }
+        }).switchIfEmpty(Mono.defer(() -> Mono.just(ResponseEntity.status(401)
+                .body(new ResponseMessage("Tài khoản không tồn tại trong hệ thống")))));
+        // if not // exist any user
     }
 
     @GetMapping("/logout")
