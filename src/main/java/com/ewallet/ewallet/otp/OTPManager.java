@@ -36,13 +36,11 @@ public class OTPManager {
 
         otpGenerator.generateOTP().thenAccept(otp -> {
             otpSender.sendOTP(otpData.getSendTo(), otp);
-            ClaimOTPModel claim = new ClaimOTPModel(otp,
-                    authentication.getPrincipal().toString(),
-                    DateTimeUtil.convertToString(
-                            Instant.now()
-                                    .plus(OTPUtil.getExpiryTime(),
-                                            ChronoUnit.SECONDS
-                                    ))
+            ClaimOTPModel claim = new ClaimOTPModel(otp, authentication.getPrincipal().toString(),
+                    DateTimeUtil.convertToString(Instant.now()
+                            .plus(OTPUtil.getExpiryTime(),
+                                    ChronoUnit.SECONDS
+                            ))
             );
 
             claimOTPRepository.save(claim).join(); //save
@@ -60,7 +58,12 @@ public class OTPManager {
     public boolean verify(String userId, OTPData otpData) {
         var userClaim = claimOTPRepository.findOtpByUserId(userId).join();
         if (userClaim.isExpired()) return false;
-        return otpData.getOtp().equals(userClaim.getOtp());
+        final boolean isMatch = otpData.getOtp().equals(userClaim.getOtp());
+        if (isMatch) {
+            claimOTPRepository.deleteByUserId(userId).join();
+        }
+
+        return isMatch;
     }
 
 }

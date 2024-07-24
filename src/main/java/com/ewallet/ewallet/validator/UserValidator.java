@@ -28,6 +28,8 @@ public class UserValidator {
             return true;
 
         }
+        if (user.getCreated()  != null) return false;
+
         return true;
     }
 
