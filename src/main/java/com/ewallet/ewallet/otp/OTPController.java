@@ -4,6 +4,7 @@ import com.ewallet.ewallet.model.response.ResponseMessage;
 import com.ewallet.ewallet.service.EmailService;
 import com.ewallet.ewallet.service.otp.OTPUtil;
 import com.ewallet.ewallet.service.otp.SmsService;
+import com.ewallet.ewallet.user.UserRepository;
 import com.ewallet.ewallet.util.ObjectUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,10 +23,11 @@ public class OTPController {
 
     OTPManager otpManager;
     EmailService emailService;
+    UserRepository userRepository;
     SmsService smsService;
 
     @PostMapping
-    public Mono<ResponseEntity<?>> sendOtp(@RequestBody @Nullable OTPData otpdata,
+    public Mono<?> sendOtp(@RequestBody @Nullable OTPData otpdata,
             Authentication authentication) {
 
         if (otpdata == null) {
@@ -36,17 +38,17 @@ public class OTPController {
         switch (otpdata.getOtpType()) {
             case "email" -> {
                 otpManager.send(emailService, otpdata, authentication);
-                return Mono.just(ResponseEntity.ok()
-                        .body(ObjectUtil.mergeObjects(new ResponseMessage(
-                                        "OTP đã được gửi đến email của bạn!"),
-                                ObjectUtil.wrapObject("email",
-                                        otpdata.getSendTo()
-                                ),
-                                ObjectUtil.wrapObject(
-                                        "expire",
-                                        OTPUtil.getExpiryTime()
-                                )
-                        )));
+                return userRepository
+                        .findById((String) authentication.getPrincipal())
+                        .flatMap(user -> {
+                            otpManager.send(emailService, otpdata, authentication);
+                            return Mono.just(ResponseEntity.ok(ObjectUtil.mergeObjects(
+                                    new ResponseMessage("OTP đã được gửi đến email của bạn!"),
+                                    ObjectUtil.wrapObject("email", user.getEmail()),ObjectUtil.wrapObject("expire",
+                                            OTPUtil.getExpiryTime()))));
+                        }).switchIfEmpty(Mono.defer(() -> Mono.just(ResponseEntity.badRequest()
+                                .body(ObjectUtil.mergeObjects(
+                                        new ResponseMessage("Không tìm thấy người dùng"))))));
             }
 
             case "phone" -> {

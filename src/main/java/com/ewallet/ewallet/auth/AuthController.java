@@ -24,12 +24,12 @@ public class AuthController {
             BCryptPasswordEncoder bCryptPasswordEncoder) {
 
         if (user.getUsername() == null || user.getPassword() == null) {
-            return Mono.just(ResponseEntity.ok().body(new ResponseMessage(
+            return Mono.just(ResponseEntity.status(401).body(new ResponseMessage(
                     "Đăng nhập thất bại, vui lòng kiểm tra lại thông tin")));
         }
 
         if (!EmailValidator.isValid(user.getUsername())) {
-            return Mono.just(ResponseEntity.ok().body(new ResponseMessage(
+            return Mono.just(ResponseEntity.status(401).body(new ResponseMessage(
                     "Đăng nhập thất bại, vui lòng kiểm tra lại thông tin")));
         }
 
@@ -39,7 +39,7 @@ public class AuthController {
 
         return foundedUser.map(u -> {
             if (u == null) {
-                return ResponseEntity.status(200).body(
+                return ResponseEntity.status(401).body(
                         new ResponseMessage("Người dùng không tồn tại"));
             }
 
