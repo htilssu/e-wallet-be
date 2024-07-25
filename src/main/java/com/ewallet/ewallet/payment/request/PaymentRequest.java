@@ -1,17 +1,18 @@
 package com.ewallet.ewallet.payment.request;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import org.springframework.data.annotation.Id;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import lombok.*;
 import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.LocalDateTime;
 
 @AllArgsConstructor
+@Entity
+@Getter
+@Setter
 @Builder
-@Data
-@Table("\"payment_request\"")
+@NoArgsConstructor
 public class PaymentRequest {
     @Id
     String id;

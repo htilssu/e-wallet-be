@@ -1,4 +1,4 @@
-package com.ewallet.ewallet.transfer;
+package com.ewallet.ewallet.transfer.exceptions;
 
 public class InsufficientBalanceException extends RuntimeException {
     public InsufficientBalanceException(String message) {

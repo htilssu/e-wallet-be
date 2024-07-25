@@ -1,41 +1,34 @@
 package com.ewallet.ewallet.transaction;
 
+import com.ewallet.ewallet.dto.mapper.TransactionMapper;
+import com.ewallet.ewallet.models.Transaction;
+import com.ewallet.ewallet.repository.TransactionRepository;
+import com.ewallet.ewallet.service.TransactionService;
+import com.ewallet.ewallet.transaction.exception.TransactionNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping(value = "/api/v?/transaction", produces = "application/json; charset=UTF-8")
+@RequestMapping(value = "/api/v1/transaction", produces = "application/json; charset=UTF-8")
 public class TransactionController {
 
-    TransactionService transactionService;
-    TransactionRepository transactionRepository;
+    private final TransactionService transactionService;
+    private final TransactionRepository transactionRepository;
+    private final TransactionMapper transactionMapper;
 
     @GetMapping("/{id}")
-    public Mono<?> getTransaction(@PathVariable String id) {
-        return transactionService.getTransactionDetail(id)
-                .flatMap(transactionDetail ->
-                        Mono.just(ResponseEntity.ok((Object) transactionDetail.flatten())))
-                .onErrorResume(
-                        this::handleException);
-    }
+    public ResponseEntity<?> getTransaction(@PathVariable String id) {
+        Transaction transaction = transactionRepository.findById(id)
+                .orElseThrow(() -> new TransactionNotFoundException("Không tìm thấy giao dịch"));
 
-    private Mono<? extends ResponseEntity<Object>> handleException(Throwable throwable) {
-        if (throwable instanceof TransactionNotFoundException) {
-            return Mono.just(ResponseEntity.notFound().build());
-        }
-        return Mono.just(ResponseEntity.badRequest().body(throwable.getMessage()));
-    }
+        var transactionResponse = transactionMapper.toResponse(transaction);
 
-//    @GetMapping("/history")
-//    public Flux<?> getTransactionHistory() {
-//        return transactionRepository.
-//    }
+        return ResponseEntity.ok(transactionResponse);
+    }
 
 }

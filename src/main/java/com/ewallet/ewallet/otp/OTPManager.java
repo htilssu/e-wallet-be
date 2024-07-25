@@ -2,7 +2,7 @@ package com.ewallet.ewallet.otp;
 
 import com.ewallet.ewallet.service.EmailService;
 import com.ewallet.ewallet.service.otp.OTPGenerator;
-import com.ewallet.ewallet.service.otp.OTPUtil;
+import com.ewallet.ewallet.util.OTPUtil;
 import com.ewallet.ewallet.service.otp.SmsService;
 import com.ewallet.ewallet.util.DateTimeUtil;
 import lombok.AllArgsConstructor;

@@ -1,21 +1,21 @@
 package com.ewallet.ewallet.payment;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Mono;
 
-@RestController()
-@RequestMapping("api/v?/payment")
+@RestController
+@RequestMapping("api/v1/payment")  // Cập nhật version API nếu cần
 public class PaymentController {
 
     @GetMapping("/{id}")
-    public Mono<String> getPayment(@PathVariable String id) {
-        return Mono.justOrEmpty("Payment made for id: " + id);
+    public ResponseEntity<String> getPayment(@PathVariable String id) {
+        String result = "Payment made for id: " + id;
+        return ResponseEntity.ok(result);
     }
 
-    @PostMapping()
-    public Mono<String> createPayment(@RequestBody PaymentModel paymentModel) {
-        return Mono.justOrEmpty(
-                "Payment made for id: " + paymentModel.id + " with amount: " + paymentModel.amount);
-    }
-
+//    @PostMapping()
+//    public ResponseEntity<String> createPayment(@RequestBody PaymentModel paymentModel) {
+//        String result = "Payment made for id: " + paymentModel.getId() + " with amount: " + paymentModel.getAmount();
+//        return ResponseEntity.ok(result);
+//    }
 }

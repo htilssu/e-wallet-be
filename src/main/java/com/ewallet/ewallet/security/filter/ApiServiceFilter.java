@@ -1,6 +1,6 @@
 package com.ewallet.ewallet.security.filter;
 
-import com.ewallet.ewallet.partner.Partner;
+import com.ewallet.ewallet.models.Partner;
 import com.ewallet.ewallet.partner.PartnerRepository;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Optional;
 
 @Component
 @AllArgsConstructor
@@ -37,15 +38,15 @@ public class ApiServiceFilter implements Filter {
         }
 
 
-        Partner partner = null;
+        Optional<Partner> partner = Optional.empty();
         try {
-            partner = partnerRepository.getPartnerByApiKey(apiKey).block();
-            if (partner != null) partner.setPassword(null);
+            partner = partnerRepository.findPartnerByApiKey(apiKey);
+            partner.ifPresent(value -> value.setPassword(null));
         } catch (RuntimeException r) {
             System.out.println("Error: " + r.getMessage());
         }
 
-        if (partner != null) {
+        if (partner.isPresent()) {
             var context = SecurityContextHolder.getContext();
             Authentication authentication = context.getAuthentication();
 

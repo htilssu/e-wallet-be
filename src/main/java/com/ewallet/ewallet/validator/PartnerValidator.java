@@ -1,6 +1,6 @@
 package com.ewallet.ewallet.validator;
 
-import com.ewallet.ewallet.partner.Partner;
+import com.ewallet.ewallet.models.Partner;
 
 public class PartnerValidator {
 

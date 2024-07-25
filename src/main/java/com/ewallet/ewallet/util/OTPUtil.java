@@ -1,4 +1,4 @@
-package com.ewallet.ewallet.service.otp;
+package com.ewallet.ewallet.util;
 
 import lombok.Getter;
 public class OTPUtil {

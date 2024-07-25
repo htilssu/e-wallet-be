@@ -1,12 +1,10 @@
 package com.ewallet.ewallet.wallet;
 
-import org.springframework.data.r2dbc.repository.Query;
-import org.springframework.data.relational.core.mapping.Table;
-import org.springframework.data.repository.reactive.ReactiveCrudRepository;
-import org.springframework.lang.Nullable;
-import reactor.core.publisher.Mono;
+import org.springframework.data.repository.CrudRepository;
 
-public interface WalletRepository extends ReactiveCrudRepository<Wallet, String> {
+import java.util.Optional;
 
-    Mono<Wallet> findByOwnerIdAndOwnerType(String ownerId, String ownerType);
+public interface WalletRepository extends CrudRepository<Wallet, String> {
+
+    Optional<Wallet> findByOwnerIdAndOwnerType(String ownerId, String ownerType);
 }

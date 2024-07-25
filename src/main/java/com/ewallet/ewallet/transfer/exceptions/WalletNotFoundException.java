@@ -1,4 +1,4 @@
-package com.ewallet.ewallet.transfer;
+package com.ewallet.ewallet.transfer.exceptions;
 
 public class WalletNotFoundException extends RuntimeException {
     public WalletNotFoundException(String message) {

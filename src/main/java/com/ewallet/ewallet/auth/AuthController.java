@@ -1,7 +1,7 @@
 package com.ewallet.ewallet.auth;
 
 import com.ewallet.ewallet.model.response.ResponseMessage;
-import com.ewallet.ewallet.user.User;
+import com.ewallet.ewallet.models.User;
 import com.ewallet.ewallet.user.UserRepository;
 import com.ewallet.ewallet.util.JwtUtil;
 import com.ewallet.ewallet.util.ObjectUtil;
@@ -10,60 +10,54 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Mono;
+
+import java.util.Optional;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping(value = "/api/v?/auth", produces = "application/json; charset=UTF-8")
+@RequestMapping(value = "/api/v1/auth", produces = "application/json; charset=UTF-8")
 public class AuthController {
 
-    UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @PostMapping("/login")
-    public Mono<ResponseEntity<?>> login(@RequestBody AuthData user,
-            BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public ResponseEntity<?> login(@RequestBody AuthData authData) {
 
-        if (user.getUsername() == null || user.getPassword() == null) {
-            return Mono.just(ResponseEntity.status(401).body(new ResponseMessage(
-                    "Đăng nhập thất bại, vui lòng kiểm tra lại thông tin")));
+        if (authData.getUsername() == null || authData.getPassword() == null) {
+            return ResponseEntity.status(401)
+                    .body(new ResponseMessage("Đăng nhập thất bại, vui lòng kiểm tra lại thông tin"));
         }
 
-        if (!EmailValidator.isValid(user.getUsername())) {
-            return Mono.just(ResponseEntity.status(401).body(new ResponseMessage(
-                    "Đăng nhập thất bại, vui lòng kiểm tra lại thông tin")));
+        if (!EmailValidator.isValid(authData.getUsername())) {
+            return ResponseEntity.status(401)
+                    .body(new ResponseMessage("Đăng nhập thất bại, vui lòng kiểm tra lại thông tin"));
         }
 
-        final Mono<User> foundedUser = userRepository.findByEmail(
-                user.getUsername()); //login by email
+        Optional<User> user = userRepository.findByEmail(authData.getUsername());
 
+        if (user.isEmpty()) {
+            return ResponseEntity.status(401)
+                    .body(new ResponseMessage("Tài khoản không tồn tại trong hệ thống"));
+        }
 
-        return foundedUser.map(u -> {
-            if (u == null) {
-                return ResponseEntity.status(401).body(
-                        new ResponseMessage("Người dùng không tồn tại"));
-            }
-
-            if (bCryptPasswordEncoder.matches(user.getPassword(), u.getPassword())) {
-                u.setPassword(null);
-                return ResponseEntity.status(200).header("Set-Cookie",
-                                "token=" + JwtUtil.generateToken(
-                                        u) + "; Path=/; SameSite=None; Secure; " + "Partitioned; " +
-                                        "Max-Age=99999;")
-                        .body(ObjectUtil.mergeObjects(ObjectUtil.wrapObject("user", u),
-                                new ResponseMessage("Đăng nhập thành công"),
-                                ObjectUtil.wrapObject("token", JwtUtil.generateToken(u))));
-            }
-            else {
-                return ResponseEntity.status(401).body(new ResponseMessage("Mật khẩu không đúng"));
-            }
-        }).switchIfEmpty(Mono.defer(() -> Mono.just(ResponseEntity.status(401)
-                .body(new ResponseMessage("Tài khoản không tồn tại trong hệ thống")))));
-        // if not // exist any user
+        if (bCryptPasswordEncoder.matches(authData.getPassword(), user.get().getPassword())) {
+            user.get().setPassword(null);
+            String token = JwtUtil.generateToken(user.orElse(null));
+            return ResponseEntity.ok()
+                    .header("Set-Cookie", "token=" + token + "; Path=/; SameSite=None; Secure; Max-Age=99999;")
+                    .body(ObjectUtil.mergeObjects(
+                            ObjectUtil.wrapObject("user", user),
+                            new ResponseMessage("Đăng nhập thành công"),
+                            ObjectUtil.wrapObject("token", token)));
+        } else {
+            return ResponseEntity.status(401)
+                    .body(new ResponseMessage("Mật khẩu không đúng"));
+        }
     }
 
     @GetMapping("/logout")
-    public Mono<String> logout() {
-        return Mono.just("Đăng xuất thành công!");
+    public ResponseEntity<String> logout() {
+        return ResponseEntity.ok("Đăng xuất thành công!");
     }
-
 }

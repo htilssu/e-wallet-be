@@ -1,6 +1,6 @@
 package com.ewallet.ewallet.validator;
 
-import com.ewallet.ewallet.user.User;
+import com.ewallet.ewallet.models.User;
 
 import java.time.Instant;
 import java.time.ZoneId;

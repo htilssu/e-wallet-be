@@ -24,16 +24,16 @@ repositories {
 }
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-jdbc")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-security")
-    implementation("org.springframework.boot:spring-boot-starter-websocket")
-    implementation("org.springframework.boot:spring-boot-configuration-processor")
-    implementation("org.springframework.cloud:spring-cloud-function-context")
-    implementation("org.springframework.boot:spring-boot-starter-webflux")
-    implementation("org.springframework.boot:spring-boot-starter-mail")
     implementation("org.springframework.boot:spring-boot-starter-validation")
-    implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
+    implementation("org.springframework.boot:spring-boot-starter-mail")
+    implementation("org.springframework.boot:spring-boot-starter-cache")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
+
 
     //jwt
     implementation("io.jsonwebtoken:jjwt:0.12.6")
@@ -50,15 +50,11 @@ dependencies {
     implementation ("com.google.code.gson:gson:2.11.0")
 
 
+
+
     //dynamodb
     implementation("software.amazon.awssdk:dynamodb-enhanced")
-    implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
     runtimeOnly("org.postgresql:postgresql")
-    runtimeOnly("org.postgresql:r2dbc-postgresql")
-    runtimeOnly("com.microsoft.sqlserver:mssql-jdbc")
-    runtimeOnly("io.r2dbc:r2dbc-mssql:1.0.0.RELEASE")
-    runtimeOnly("com.h2database:h2")
-    runtimeOnly("io.r2dbc:r2dbc-h2")
 
 
 
@@ -66,11 +62,13 @@ dependencies {
     "developmentOnly"("org.springframework.boot:spring-boot-devtools")
 
     compileOnly("org.projectlombok:lombok")
-
     annotationProcessor("org.projectlombok:lombok")
-    testImplementation("io.projectreactor:reactor-test")
+
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+
+    implementation ("org.mapstruct:mapstruct:1.5.5.Final")
+    annotationProcessor ("org.mapstruct:mapstruct-processor:1.5.5.Final")
 }
 
 dependencyManagement {
@@ -87,4 +85,3 @@ tasks.withType<Test> {
 tasks.compileJava { //encode UTF-8
     options.encoding = "UTF-8"
 }
-

@@ -6,7 +6,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Mono;
+
+import java.util.Optional;
 
 @AllArgsConstructor
 @RestController
@@ -16,43 +17,30 @@ public class PaymentRequestController {
     PaymentRequestRepository paymentRequestRepository;
 
     @GetMapping("/{id}")
-    public Mono<?> getOrderById(@PathVariable String id,
-            Authentication authentication) {
-        final Mono<PaymentRequest> orderMono = paymentRequestRepository.findById(id);
+    public ResponseEntity<?> getOrderById(@PathVariable String id, Authentication authentication) {
+        Optional<PaymentRequest> orderOptional = paymentRequestRepository.findById(id);
 
-        return orderMono.map(
-                ResponseEntity::ok
-        );
+        return orderOptional
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping()
-    public Mono<?> createPayment(@RequestBody PaymentRequestData paymentRequest,
-            Authentication authentication, HttpServletRequest request) {
-        if (paymentRequest == null) {
-            return Mono.just(ResponseEntity.badRequest().body(null));
+    public ResponseEntity<?> createPayment(@RequestBody PaymentRequestData paymentRequest, Authentication authentication, HttpServletRequest request) {
+        if (paymentRequest == null || paymentRequest.getMoney() <= 0 || paymentRequest.getVoucherId() == null || paymentRequest.getVoucherName() == null) {
+            return ResponseEntity.badRequest().body(null);
         }
 
-        if (paymentRequest.getMoney() <= 0) {
-            return Mono.just(ResponseEntity.badRequest().body(null));
-        }
-        if (paymentRequest.getVoucherId() == null) {
-            return Mono.just(ResponseEntity.badRequest().body(null));
-        }
-        if (paymentRequest.getVoucherName() == null) {
-            return Mono.just(ResponseEntity.badRequest().body(null));
-        }
+        PaymentRequest newPaymentRequest = PaymentRequest.builder()
+                .money(paymentRequest.getMoney())
+                .voucherId(paymentRequest.getVoucherId())
+                .voucherName(paymentRequest.getVoucherName())
+                .voucherCode(paymentRequest.getVoucherCode())
+                .voucherDiscount(paymentRequest.getVoucherDiscount())
+                .status("PENDING")
+                .build();
 
-
-        return paymentRequestRepository.save(PaymentRequest.builder().money(
-                                paymentRequest.getMoney())
-                        .voucherId(paymentRequest.getVoucherId())
-                        .voucherName(paymentRequest.getVoucherName())
-                        .voucherCode(paymentRequest.getVoucherCode())
-                        .voucherDiscount(paymentRequest.getVoucherDiscount())
-                        .status("PENDING")
-                        .build())
-                .map(savedEntity -> ResponseEntity.ok(ObjectUtil.mergeObjects(savedEntity,
-                        ObjectUtil.wrapObject("checkUrl",
-                                request.getRequestURL().toString() + "/" + savedEntity.getId()))));
+        PaymentRequest savedEntity = paymentRequestRepository.save(newPaymentRequest);
+        return ResponseEntity.ok(ObjectUtil.mergeObjects(savedEntity, ObjectUtil.wrapObject("checkUrl", request.getRequestURL().toString() + "/" + savedEntity.getId())));
     }
 }

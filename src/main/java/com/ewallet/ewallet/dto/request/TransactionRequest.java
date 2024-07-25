@@ -1,17 +1,13 @@
-package com.ewallet.ewallet.transfer;
+package com.ewallet.ewallet.dto.request;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 
-@AllArgsConstructor
 @Data
-public class TransferData {
-
+public class TransactionRequest {
     /**
      * Loại ví nhận tiền
      */
-    String transferTarget;
+    String transactionTarget;
     /**
      * Người nhận tiền
      */

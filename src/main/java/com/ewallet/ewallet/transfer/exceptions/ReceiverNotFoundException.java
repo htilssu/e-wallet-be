@@ -1,4 +1,4 @@
-package com.ewallet.ewallet.transfer;
+package com.ewallet.ewallet.transfer.exceptions;
 
 public class ReceiverNotFoundException extends RuntimeException {
     public ReceiverNotFoundException(String message) {

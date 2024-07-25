@@ -1,10 +1,14 @@
 package com.ewallet.ewallet.partner;
 
-import org.springframework.data.repository.reactive.ReactiveCrudRepository;
-import reactor.core.publisher.Mono;
+import com.ewallet.ewallet.models.Partner;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 
-public interface PartnerRepository extends ReactiveCrudRepository<Partner, String> {
+import java.util.Optional;
 
-    Mono<Partner> getPartnerById(String id);
-    Mono<Partner> getPartnerByApiKey(String apiKey);
+
+@Repository
+public interface PartnerRepository extends CrudRepository<Partner, String> {
+
+    Optional<Partner> findPartnerByApiKey(String apiKey);
 }
