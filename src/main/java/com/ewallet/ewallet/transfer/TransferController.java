@@ -2,18 +2,16 @@ package com.ewallet.ewallet.transfer;
 
 import com.ewallet.ewallet.dto.mapper.TransactionMapper;
 import com.ewallet.ewallet.dto.request.TransactionRequest;
-import com.ewallet.ewallet.dto.response.TransactionResponse;
 import com.ewallet.ewallet.model.response.ResponseMessage;
 import com.ewallet.ewallet.models.Transaction;
 import com.ewallet.ewallet.models.User;
+import com.ewallet.ewallet.models.Wallet;
 import com.ewallet.ewallet.models.WalletTransaction;
 import com.ewallet.ewallet.repository.TransactionRepository;
 import com.ewallet.ewallet.repository.WalletTransactionRepository;
 import com.ewallet.ewallet.service.TransactionService;
-import com.ewallet.ewallet.transfer.exceptions.InsufficientBalanceException;
 import com.ewallet.ewallet.transfer.exceptions.ReceiverNotFoundException;
 import com.ewallet.ewallet.user.UserRepository;
-import com.ewallet.ewallet.wallet.Wallet;
 import com.ewallet.ewallet.wallet.WalletRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @RestController
@@ -52,7 +51,8 @@ public class TransferController {
         }
 
         String senderId = authentication.getName();
-        Optional<Wallet> optionalSenderWallet = walletRepository.findByOwnerIdAndOwnerType(senderId, "user");
+        Optional<Wallet> optionalSenderWallet = walletRepository.findByOwnerIdAndOwnerType(senderId,
+                "user");
 
         if (optionalSenderWallet.isEmpty()) {
             return ResponseEntity.badRequest()
@@ -63,22 +63,23 @@ public class TransferController {
 
         if (senderWallet.getBalance() < data.getMoney() || senderWallet.getBalance() <= 0) {
             return ResponseEntity.badRequest()
-                    .body(new InsufficientBalanceException("Số dư của bạn không đủ!"));
+                    .body(new ResponseMessage("Số dư không đủ"));
         }
 
         Optional<User> optionalReceiver = userRepository.findByEmail(data.getSendTo());
 
         if (optionalReceiver.isEmpty()) {
             return ResponseEntity.badRequest()
-                    .body(new ReceiverNotFoundException("Không tìm thấy người nhận"));
+                    .body(new ResponseMessage("Không tìm thấy người nhận"));
         }
 
         User receiver = optionalReceiver.get();
-        Optional<Wallet> optionalReceiverWallet = walletRepository.findByOwnerIdAndOwnerType(receiver.getId(), "user");
+        Optional<Wallet> optionalReceiverWallet = walletRepository.findByOwnerIdAndOwnerType(
+                receiver.getId(), "user");
 
         if (optionalReceiverWallet.isEmpty()) {
             return ResponseEntity.badRequest()
-                    .body(new ReceiverNotFoundException("Không tìm thấy ví người nhận"));
+                    .body(new ResponseMessage("Không tìm thấy ví của người nhận"));
         }
 
         Wallet receiverWallet = optionalReceiverWallet.get();
@@ -88,17 +89,30 @@ public class TransferController {
         transactionRepository.save(transaction);
 
         WalletTransaction walletTransaction = WalletTransaction.builder()
-                .id(transaction.getId())
                 .senderWallet(senderWallet)
                 .receiverWallet(receiverWallet)
                 .build();
 
+        if (Objects.equals(senderWallet.getId(), receiverWallet.getId())) {
+            return ResponseEntity.badRequest().body(
+                    new ResponseMessage("Không thể chuyển tiền cho chính mình"));
+        }
+        walletTransaction.setTransaction(transaction);
         walletTransactionRepository.save(walletTransaction);
 
         walletRepository.saveAll(List.of(senderWallet, receiverWallet));
 
-        TransactionResponse transactionResponse = transactionService.getTransactionDetail(transaction.getId());
 
-        return ResponseEntity.ok(transactionResponse);
+        final Optional<WalletTransaction> walletTransactionOptional =
+                walletTransactionRepository.findById(
+                        walletTransaction.getId());
+
+
+        if (walletTransactionOptional.isEmpty()) {
+            return ResponseEntity.badRequest()
+                    .body(new ResponseMessage("Chuyển tiền thất bại"));
+        }
+
+         return ResponseEntity.ok(walletTransactionOptional.get());
     }
 }

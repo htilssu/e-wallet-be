@@ -51,7 +51,7 @@ public class ApiServiceFilter implements Filter {
             Authentication authentication = context.getAuthentication();
 
             if (authentication == null) {
-                context.setAuthentication(new UsernamePasswordAuthenticationToken(partner
+                context.setAuthentication(new UsernamePasswordAuthenticationToken(partner.get()
                         , apiKey,
                         Collections.singleton(new SimpleGrantedAuthority("ROLE_PARTNER"))));
             }

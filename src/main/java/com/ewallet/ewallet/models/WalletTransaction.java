@@ -1,17 +1,16 @@
 package com.ewallet.ewallet.models;
 
-import com.ewallet.ewallet.wallet.Wallet;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 
 @Getter
 @Setter
-@Entity
 @Builder
-@Table(name = "wallet_transaction")
+@Entity
 @NoArgsConstructor
 @AllArgsConstructor
 public class WalletTransaction {

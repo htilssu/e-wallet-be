@@ -86,16 +86,17 @@ DROP TABLE IF EXISTS partner CASCADE;
 
 CREATE TABLE partner
 (
-    id           char(10) PRIMARY KEY  DEFAULT generate_partner_id(),
+    id           char(10) PRIMARY KEY DEFAULT generate_partner_id(),
     name         varchar(255) NOT NULL,
     description  text,
     email        VARCHAR(255) NOT NULL UNIQUE,
     avatar       VARCHAR(255),
+    partner_type varchar(100) not null,
     password     VARCHAR(255) NOT NULL,
     api_base_url VARCHAR(255) NOT NULL,
     api_key      VARCHAR(255) NOT NULL,
     balance      numeric      NOT NULL,
-    created      date         NOT NULL DEFAULT CURRENT_DATE,
+    created      date          DEFAULT CURRENT_DATE,
     UNIQUE (email),
     UNIQUE (api_key)
 );
@@ -313,8 +314,8 @@ CREATE TABLE "payment_request"
     voucher_code            varchar(100)   NULL,
     voucher_discount        numeric(10, 2) NULL,
     external_transaction_id varchar(50)    NULL,
-    created                 timestamp           NOT NULL DEFAULT current_timestamp,
-    updated                 timestamp        NOT NULL DEFAULT current_timestamp,
+    created                 timestamp      NOT NULL DEFAULT current_timestamp,
+    updated                 timestamp      NOT NULL DEFAULT current_timestamp,
     unique (external_transaction_id),
     unique (transaction_id),
     unique (id, partner_id)

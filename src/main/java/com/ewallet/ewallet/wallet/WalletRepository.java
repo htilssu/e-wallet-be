@@ -1,5 +1,6 @@
 package com.ewallet.ewallet.wallet;
 
+import com.ewallet.ewallet.models.Wallet;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;

@@ -2,8 +2,8 @@ package com.ewallet.ewallet.user;
 
 import com.ewallet.ewallet.model.response.ResponseMessage;
 import com.ewallet.ewallet.models.User;
+import com.ewallet.ewallet.models.Wallet;
 import com.ewallet.ewallet.validator.UserValidator;
-import com.ewallet.ewallet.wallet.Wallet;
 import com.ewallet.ewallet.wallet.WalletRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;

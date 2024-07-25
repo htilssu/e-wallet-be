@@ -47,7 +47,7 @@ public class AuthController {
             return ResponseEntity.ok()
                     .header("Set-Cookie", "token=" + token + "; Path=/; SameSite=None; Secure; Max-Age=99999;")
                     .body(ObjectUtil.mergeObjects(
-                            ObjectUtil.wrapObject("user", user),
+                            ObjectUtil.wrapObject("user", user.get()),
                             new ResponseMessage("Đăng nhập thành công"),
                             ObjectUtil.wrapObject("token", token)));
         } else {

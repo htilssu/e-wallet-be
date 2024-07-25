@@ -51,7 +51,6 @@ dependencies {
 
 
 
-
     //dynamodb
     implementation("software.amazon.awssdk:dynamodb-enhanced")
     runtimeOnly("org.postgresql:postgresql")
