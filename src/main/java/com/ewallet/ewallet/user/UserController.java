@@ -32,7 +32,7 @@ public class UserController {
 
         Optional<User> existingUser = userRepository.findByEmail(user.getEmail());
 
-        if (existingUser.isEmpty()) {
+        if (existingUser.isPresent()) {
             return ResponseEntity.ok(new ResponseMessage("Người dùng đã tồn tại"));
         }
 
