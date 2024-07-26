@@ -21,7 +21,11 @@ public interface UserMapper {
 
     @AfterMapping
     default void create(@MappingTarget UserDto userDto, User user) {
-        userDto.setCreated(DateTimeFormatter.ISO_DATE_TIME.format(user.getCreated()));
-        userDto.setDob(DateTimeFormatter.ISO_DATE_TIME.format(user.getDob()));
+        if (user.getCreated() != null) {
+            userDto.setCreated(user.getCreated().toString());
+        }
+        if (user.getDob() != null) {
+            userDto.setDob(user.getDob().toString());
+        }
     }
 }

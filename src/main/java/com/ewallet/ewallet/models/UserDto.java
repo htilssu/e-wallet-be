@@ -46,7 +46,6 @@ public class UserDto implements Serializable {
     private Boolean gender;
     @NotNull
     private String created;
-    private PartnerDto partner;
     @Size(max = 255)
     private String address;
     @Size(max = 10)

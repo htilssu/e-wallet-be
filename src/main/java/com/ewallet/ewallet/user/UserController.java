@@ -1,7 +1,9 @@
 package com.ewallet.ewallet.user;
 
+import com.ewallet.ewallet.dto.mapper.UserMapperImpl;
 import com.ewallet.ewallet.model.response.ResponseMessage;
 import com.ewallet.ewallet.models.User;
+import com.ewallet.ewallet.models.UserDto;
 import com.ewallet.ewallet.models.Wallet;
 import com.ewallet.ewallet.validator.UserValidator;
 import com.ewallet.ewallet.wallet.WalletRepository;
@@ -21,6 +23,7 @@ public class UserController {
     private final UserRepository userRepository;
     private final WalletRepository walletRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final UserMapperImpl userMapperImpl;
 
     @PostMapping("/register")
     public ResponseEntity<ResponseMessage> register(@RequestBody User user) {
@@ -46,11 +49,11 @@ public class UserController {
     }
 
     @GetMapping()
-    public ResponseEntity<User> getUser(Authentication authentication) {
+    public ResponseEntity<UserDto> getUser(Authentication authentication) {
         Optional<User> user = userRepository.findById((String) authentication.getPrincipal());
         if (user.isPresent()) {
             user.get().setPassword(null);
-            return ResponseEntity.ok(user.get());
+            return ResponseEntity.ok(userMapperImpl.toDto(user.get()));
         }
         return ResponseEntity.notFound().build();
     }

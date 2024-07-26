@@ -1,5 +1,6 @@
 package com.ewallet.ewallet.auth;
 
+import com.ewallet.ewallet.dto.mapper.UserMapperImpl;
 import com.ewallet.ewallet.model.response.ResponseMessage;
 import com.ewallet.ewallet.models.User;
 import com.ewallet.ewallet.user.UserRepository;
@@ -20,6 +21,7 @@ public class AuthController {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final UserMapperImpl userMapperImpl;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthData authData) {
@@ -47,7 +49,7 @@ public class AuthController {
             return ResponseEntity.ok()
                     .header("Set-Cookie", "token=" + token + "; Path=/; SameSite=None; Secure; Max-Age=99999;")
                     .body(ObjectUtil.mergeObjects(
-                            ObjectUtil.wrapObject("user", user.get()),
+                            ObjectUtil.wrapObject("user", userMapperImpl.toDto(user.get())),
                             new ResponseMessage("Đăng nhập thành công"),
                             ObjectUtil.wrapObject("token", token)));
         } else {
