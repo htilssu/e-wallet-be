@@ -62,4 +62,8 @@ public class Order {
     @Column(name = "updated", nullable = false)
     private LocalDate updated;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "payment_method")
+    private PaymentMethod paymentMethod;
+
 }

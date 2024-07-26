@@ -42,7 +42,7 @@ public class Transaction {
     private String transactionTarget;
 
     @Size(max = 50)
-    @ColumnDefault("'pending'")
+    @ColumnDefault("'PENDING'")
     @Column(name = "status", nullable = false, length = 50)
     private String status;
 

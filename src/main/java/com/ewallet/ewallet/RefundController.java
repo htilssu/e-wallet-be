@@ -44,16 +44,16 @@ public class RefundController {
         final Transaction transaction = transactionOptional.get();
 
         switch (transaction.getStatus()) {
-            case "refunded":
+            case "REFUNDED":
                 return ResponseEntity.badRequest().body(new RefundResponse(transactionMapperImpl.toResponse(transaction),
                         "Giao dịch đã được hoàn tiền trước đó"));
-            case "pending":
+            case "PENDING":
                 return ResponseEntity.badRequest().body(new RefundResponse(transactionMapperImpl.toResponse(transaction),
                         "Giao dịch đang chờ xử lý"));
-            case "failed":
+            case "FAILED":
                 return ResponseEntity.badRequest().body(new RefundResponse(transactionMapperImpl.toResponse(transaction),
                         "Giao dịch đã thất bại"));
-            case "success":
+            case "SUCCESS":
                 break;
             default:
                 return ResponseEntity.badRequest().body(new RefundResponse(transactionMapperImpl.toResponse(transaction),

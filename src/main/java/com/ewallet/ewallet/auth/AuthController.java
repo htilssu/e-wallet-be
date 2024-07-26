@@ -7,6 +7,7 @@ import com.ewallet.ewallet.user.UserRepository;
 import com.ewallet.ewallet.util.JwtUtil;
 import com.ewallet.ewallet.util.ObjectUtil;
 import com.ewallet.ewallet.validator.EmailValidator;
+import com.ewallet.ewallet.validator.UserValidator;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -57,6 +58,30 @@ public class AuthController {
                     .body(new ResponseMessage("Mật khẩu không đúng"));
         }
     }
+
+    @PostMapping("/register")
+    public ResponseEntity<ResponseMessage> register(@RequestBody User user) {
+
+        if (!UserValidator.isValidateUser(user)) {
+            return ResponseEntity.badRequest()
+                    .body(new ResponseMessage("Vui lòng kiểm tra lại thông tin"));
+        }
+
+        Optional<User> existingUser = userRepository.findByEmail(user.getEmail());
+
+        if (existingUser.isPresent()) {
+            return ResponseEntity.ok(new ResponseMessage("Người dùng đã tồn tại"));
+        }
+
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        try {
+            userRepository.save(user);
+            return ResponseEntity.ok(new ResponseMessage("Đăng ký thành công"));
+        } catch (Exception e) {
+            return ResponseEntity.ok(new ResponseMessage(e.getMessage()));
+        }
+    }
+
 
     @GetMapping("/logout")
     public ResponseEntity<String> logout() {

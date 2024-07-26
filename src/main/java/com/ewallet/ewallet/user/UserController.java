@@ -25,28 +25,6 @@ public class UserController {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final UserMapperImpl userMapperImpl;
 
-    @PostMapping("/register")
-    public ResponseEntity<ResponseMessage> register(@RequestBody User user) {
-
-        if (!UserValidator.isValidateUser(user)) {
-            return ResponseEntity.badRequest()
-                    .body(new ResponseMessage("Vui lòng kiểm tra lại thông tin"));
-        }
-
-        Optional<User> existingUser = userRepository.findByEmail(user.getEmail());
-
-        if (existingUser.isPresent()) {
-            return ResponseEntity.ok(new ResponseMessage("Người dùng đã tồn tại"));
-        }
-
-        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        try {
-            userRepository.save(user);
-            return ResponseEntity.ok(new ResponseMessage("Đăng ký thành công"));
-        } catch (Exception e) {
-            return ResponseEntity.ok(new ResponseMessage(e.getMessage()));
-        }
-    }
 
     @GetMapping()
     public ResponseEntity<UserDto> getUser(Authentication authentication) {

@@ -48,7 +48,7 @@ public class EWalletApplication {
                 .requestMatchers("/api/v?/user/**")
                 .hasRole("USER")
                 .requestMatchers("/api/v?/partner/**",
-                        "/api/v?/payment/**")
+                        "/api/v?/payment/**", "/api/v?/prequest/**")
                 .hasRole("PARTNER")
                 .requestMatchers("/api/v?/admin/**")
                 .hasRole("ADMIN")

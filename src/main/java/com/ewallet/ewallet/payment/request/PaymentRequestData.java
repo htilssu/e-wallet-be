@@ -12,5 +12,6 @@ public class PaymentRequestData {
     String voucherName;
     String voucherCode;
     double voucherDiscount;
-
+    String returnUrl;
+    String orderId;
 }
