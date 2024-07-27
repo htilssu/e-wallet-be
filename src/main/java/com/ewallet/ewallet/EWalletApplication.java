@@ -41,7 +41,7 @@ public class EWalletApplication {
 
 
         http.authorizeHttpRequests(auth -> auth.requestMatchers("/api/v?/auth/**",
-                        "/api/v?/user/register",
+                        "/api/v?/auth/register",
                         "/api/v?/partner/register"
                 )
                 .permitAll()

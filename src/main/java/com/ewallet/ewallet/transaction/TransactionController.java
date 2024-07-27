@@ -7,10 +7,10 @@ import com.ewallet.ewallet.repository.TransactionRepository;
 import com.ewallet.ewallet.service.TransactionService;
 import com.ewallet.ewallet.transaction.exception.TransactionNotFoundException;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @AllArgsConstructor
 @RestController
@@ -28,6 +28,17 @@ public class TransactionController {
 
         return transactionService.getTransactionDetail(id);
 
+    }
+
+    public Transaction getAllTransaction(@RequestParam Map<String,String> allParams, Authentication authentication) {
+        int offset = Integer.parseInt(allParams.get("offset"));
+        String id = ((String) authentication.getPrincipal());
+
+
+
+
+
+        return null;
     }
 
 }
