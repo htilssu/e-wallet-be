@@ -1,6 +1,7 @@
 package com.ewallet.ewallet.auth;
 
 import com.ewallet.ewallet.dto.mapper.UserMapperImpl;
+import com.ewallet.ewallet.dto.request.UserDto;
 import com.ewallet.ewallet.model.response.ResponseMessage;
 import com.ewallet.ewallet.models.User;
 import com.ewallet.ewallet.user.UserRepository;
@@ -60,9 +61,11 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<ResponseMessage> register(@RequestBody User user) {
+    public ResponseEntity<ResponseMessage> register(@RequestBody UserDto user) {
 
-        if (!UserValidator.isValidateUser(user)) {
+        User userEntity = userMapperImpl.toEntity(user);
+
+        if (!UserValidator.isValidateUser(userEntity)) {
             return ResponseEntity.badRequest()
                     .body(new ResponseMessage("Vui lòng kiểm tra lại thông tin"));
         }
@@ -75,7 +78,7 @@ public class AuthController {
 
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         try {
-            userRepository.save(user);
+            userRepository.save(userEntity);
             return ResponseEntity.ok(new ResponseMessage("Đăng ký thành công"));
         } catch (Exception e) {
             return ResponseEntity.ok(new ResponseMessage(e.getMessage()));

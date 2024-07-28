@@ -1,6 +1,6 @@
-package com.ewallet.ewallet.models;
+package com.ewallet.ewallet.dto.request;
 
-import com.ewallet.ewallet.dto.response.PartnerDto;
+import com.ewallet.ewallet.models.User;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -22,8 +22,6 @@ import java.time.LocalDate;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UserDto implements Serializable {
 
-    @Size(max = 10)
-    private String id;
     @NotNull
     @Size(max = 50)
     private String firstName;
@@ -35,17 +33,12 @@ public class UserDto implements Serializable {
     private String email;
     @Size(max = 50)
     private String userName;
+    @NotNull
     @Size(max = 255)
-    private String avatar;
+    private String password;
     @NotNull
     private String dob;
-    @NotNull
-    private Boolean isActive = false;
-    @NotNull
-    private Boolean isVerified = false;
     private Boolean gender;
-    @NotNull
-    private String created;
     @Size(max = 255)
     private String address;
     @Size(max = 10)
