@@ -46,11 +46,17 @@ public interface UserMapper {
             com.ewallet.ewallet.dto.request.UserDto userDto) {
         if (userDto.getDob() != null) {
             try {
-                user.setDob(
-                        LocalDate.from(DateTimeFormatter.ofPattern("dd/MM/yyyy")
-                                .parse(userDto.getDob())));
+                user.setDob(LocalDate.parse(userDto.getDob()));
             } catch (Exception e) {
-                user.setDob(null);
+                try {
+                    user.setDob(
+                            LocalDate.from(DateTimeFormatter.ofPattern("dd/MM/yyyy")
+                                    .parse(userDto.getDob())));
+                } catch (Exception e1) {
+                    user.setDob(
+                            LocalDate.from(DateTimeFormatter.ofPattern("yyyy-MM-dd")
+                                    .parse(userDto.getDob())));
+                }
             }
         }
     }
