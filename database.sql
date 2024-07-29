@@ -455,6 +455,27 @@ CREATE TABLE group_fund_transaction
 );
 
 
+create table atm
+(
+    id   serial primary key,
+    name varchar(255) not null
+);
+
+create table atm_card
+(
+    id          serial primary key,
+    atm_id      int references atm (id),
+    card_number varchar(16)  not null,
+    csv         varchar(3)   not null,
+    holder_name varchar(255) not null,
+    owner_id    char(10) references "user" (id),
+    expired     date         not null,
+    created     date         not null default current_date,
+    unique (card_number)
+);
+
+
+
 
 create index wallet_transaction_sd_idx on wallet_transaction (sender_wallet);
 create index wallet_transaction_rc_idx on wallet_transaction (receiver_wallet);
