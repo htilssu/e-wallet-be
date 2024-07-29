@@ -1,6 +1,6 @@
 package com.ewallet.ewallet.otp;
 
-import com.ewallet.ewallet.model.response.ResponseMessage;
+import com.ewallet.ewallet.dto.response.ResponseMessage;
 import com.ewallet.ewallet.models.User;
 import com.ewallet.ewallet.service.EmailService;
 import com.ewallet.ewallet.util.OTPUtil;

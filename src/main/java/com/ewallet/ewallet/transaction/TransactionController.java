@@ -30,12 +30,11 @@ public class TransactionController {
 
     }
 
-    public Transaction getAllTransaction(@RequestParam Map<String,String> allParams, Authentication authentication) {
+    @GetMapping("/history")
+    public Transaction getAllTransaction(@RequestParam Map<String, String> allParams,
+            Authentication authentication) {
         int offset = Integer.parseInt(allParams.get("offset"));
         String id = ((String) authentication.getPrincipal());
-
-
-
 
 
         return null;

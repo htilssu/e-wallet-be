@@ -1,23 +1,18 @@
 package com.ewallet.ewallet.partner;
 
 import com.ewallet.ewallet.dto.mapper.PartnerMapperImpl;
-import com.ewallet.ewallet.dto.response.PartnerDto;
 import com.ewallet.ewallet.dto.response.PartnerRequest;
-import com.ewallet.ewallet.model.response.ResponseMessage;
+import com.ewallet.ewallet.dto.response.ResponseMessage;
 import com.ewallet.ewallet.models.Partner;
 import com.ewallet.ewallet.util.ApiKeyUtil;
 import com.ewallet.ewallet.util.JwtUtil;
 import com.ewallet.ewallet.util.ObjectUtil;
-import com.ewallet.ewallet.validator.EmailValidator;
-import com.ewallet.ewallet.validator.PartnerValidator;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 @Data
 @AllArgsConstructor

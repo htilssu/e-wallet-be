@@ -96,7 +96,7 @@ CREATE TABLE partner
     api_base_url VARCHAR(255) NOT NULL,
     api_key      VARCHAR(255) NOT NULL,
     balance      numeric      NOT NULL,
-    created      date          DEFAULT CURRENT_DATE,
+    created      date                 DEFAULT CURRENT_DATE,
     UNIQUE (email),
     UNIQUE (api_key)
 );
@@ -268,6 +268,10 @@ CREATE TABLE transaction
 (
     id                 char(15) PRIMARY KEY    DEFAULT generate_transaction_id(),
     money              decimal(10, 2) NOT NULL,
+    sender_id          char(10)       NOT NULL,
+    sender_type        varchar(20)    NOT NULL default 'user',
+    receiver_type      varchar(20)    NOT NULL default 'user',
+    receiver_id        char(10)       NOT NULL,
     currency           VARCHAR(3)     NOT NULL default 'VND',
     transaction_type   varchar(20)    NOT NULL default 'transfer',
     transaction_target varchar(20)    NOT NULL default 'wallet',
@@ -276,6 +280,12 @@ CREATE TABLE transaction
     updated            TIMESTAMP(3)   NOT NULL DEFAULT current_timestamp(3)
 );
 
+create table constant
+(
+    id    varchar(50) PRIMARY KEY,
+    name  varchar(100)     NOT NULL,
+    value double precision NOT NULL
+);
 
 drop table if exists wallet_transaction;
 create table wallet_transaction
@@ -448,3 +458,11 @@ CREATE TABLE group_fund_transaction
 
 create index wallet_transaction_sd_idx on wallet_transaction (sender_wallet);
 create index wallet_transaction_rc_idx on wallet_transaction (receiver_wallet);
+
+
+
+insert into constant
+values ('MIN_TRANSFER', 'Số tiền tối thiểu cho mỗi giao dịch', 100),
+       ('MAX_TRANSFER', 'Số tiền tối đa cho mỗi giao dịch', 1000000000),
+       ('MIN_WITHDRAW', 'Số tiền tối thiểu cho mỗi giao dịch', 10000),
+       ('MAX_WITHDRAW', 'Số tiền tối đa cho mỗi giao dịch', 1000000000);

@@ -1,4 +1,4 @@
-package com.ewallet.ewallet.model.response;
+package com.ewallet.ewallet.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;

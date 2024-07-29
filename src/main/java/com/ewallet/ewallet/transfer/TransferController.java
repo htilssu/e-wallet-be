@@ -1,16 +1,17 @@
 package com.ewallet.ewallet.transfer;
 
+import com.ewallet.ewallet.constants.Constant;
 import com.ewallet.ewallet.dto.mapper.TransactionMapper;
 import com.ewallet.ewallet.dto.request.TransactionRequest;
-import com.ewallet.ewallet.model.response.ResponseMessage;
+import com.ewallet.ewallet.dto.response.ResponseMessage;
 import com.ewallet.ewallet.models.Transaction;
 import com.ewallet.ewallet.models.User;
 import com.ewallet.ewallet.models.Wallet;
 import com.ewallet.ewallet.models.WalletTransaction;
+import com.ewallet.ewallet.repository.ConstantRepository;
 import com.ewallet.ewallet.repository.TransactionRepository;
 import com.ewallet.ewallet.repository.WalletTransactionRepository;
 import com.ewallet.ewallet.service.TransactionService;
-import com.ewallet.ewallet.transfer.exceptions.ReceiverNotFoundException;
 import com.ewallet.ewallet.user.UserRepository;
 import com.ewallet.ewallet.wallet.WalletRepository;
 import lombok.AllArgsConstructor;
@@ -31,6 +32,7 @@ import java.util.Optional;
 public class TransferController {
 
     private final TransactionService transactionService;
+    private final ConstantRepository constantRepository;
     TransactionRepository transactionRepository;
     UserRepository userRepository;
     WalletRepository walletRepository;
@@ -51,12 +53,41 @@ public class TransferController {
         }
 
         String senderId = authentication.getName();
+        return handleTransfer(senderId, data);
+    }
+
+    private ResponseEntity<?> handleTransfer(String senderId, TransactionRequest data) {
+        switch (data.getTransactionTarget()) {
+            case "wallet":
+                return transferToWallet(senderId, data);
+            case "fund":
+                return ResponseEntity.ok()
+                        .body(new ResponseMessage(
+                                "Chức năng chuyển tiền vào quỹ chưa được hỗ trợ"));
+            //                return transferToEmail(senderId, data);
+            default:
+                return ResponseEntity.badRequest()
+                        .body(new ResponseMessage("Loại ví không hợp lệ"));
+        }
+    }
+
+    private ResponseEntity<?> transferToWallet(String senderId, TransactionRequest data) {
+        final com.ewallet.ewallet.models.Constant minimumTransferConstant =
+                constantRepository.findById(
+                        Constant.MINIMUM_TRANSFER_AMOUNT).orElseThrow();
+
+        if (data.getMoney() < minimumTransferConstant.getValue()) {
+            return ResponseEntity.badRequest()
+                    .body(new ResponseMessage("Số tiền chuyển phải lớn hơn "
+                            + minimumTransferConstant.getValue()));
+        }
+
         Optional<Wallet> optionalSenderWallet = walletRepository.findByOwnerIdAndOwnerType(senderId,
                 "user");
 
         if (optionalSenderWallet.isEmpty()) {
-            return ResponseEntity.badRequest()
-                    .body(new ReceiverNotFoundException("Không tìm thấy ví của bạn"));
+            return ResponseEntity.ok()
+                    .body(new ResponseMessage("Không tìm thấy ví của người gửi"));
         }
 
         Wallet senderWallet = optionalSenderWallet.get();
@@ -69,7 +100,7 @@ public class TransferController {
         Optional<User> optionalReceiver = userRepository.findByEmail(data.getSendTo());
 
         if (optionalReceiver.isEmpty()) {
-            return ResponseEntity.badRequest()
+            return ResponseEntity.ok()
                     .body(new ResponseMessage("Không tìm thấy người nhận"));
         }
 
@@ -78,14 +109,21 @@ public class TransferController {
                 receiver.getId(), "user");
 
         if (optionalReceiverWallet.isEmpty()) {
-            return ResponseEntity.badRequest()
+            return ResponseEntity.ok()
                     .body(new ResponseMessage("Không tìm thấy ví của người nhận"));
         }
 
         Wallet receiverWallet = optionalReceiverWallet.get();
         senderWallet.sendMoneyTo(receiverWallet, data.getMoney());
 
+        if (Objects.equals(senderWallet.getId(), receiverWallet.getId())) {
+            return ResponseEntity.badRequest().body(
+                    new ResponseMessage("Không thể chuyển tiền cho chính mình"));
+        }
+
         Transaction transaction = transactionMapper.toEntity(data);
+        transaction.setSenderId(senderId);
+        transaction.setReceiverId(receiver.getId());
         transactionRepository.save(transaction);
 
         WalletTransaction walletTransaction = WalletTransaction.builder()
@@ -93,10 +131,7 @@ public class TransferController {
                 .receiverWallet(receiverWallet)
                 .build();
 
-        if (Objects.equals(senderWallet.getId(), receiverWallet.getId())) {
-            return ResponseEntity.badRequest().body(
-                    new ResponseMessage("Không thể chuyển tiền cho chính mình"));
-        }
+
         walletTransaction.setTransaction(transaction);
         walletTransactionRepository.save(walletTransaction);
 
@@ -109,10 +144,12 @@ public class TransferController {
 
 
         if (walletTransactionOptional.isEmpty()) {
-            return ResponseEntity.badRequest()
+            transaction.setStatus("FAILED");
+            transactionRepository.save(transaction);
+            return ResponseEntity.ok()
                     .body(new ResponseMessage("Chuyển tiền thất bại"));
         }
 
-         return ResponseEntity.ok(walletTransactionOptional.get());
+        return ResponseEntity.ok(walletTransactionOptional.get());
     }
 }

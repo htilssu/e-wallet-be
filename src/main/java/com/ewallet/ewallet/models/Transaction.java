@@ -54,4 +54,24 @@ public class Transaction {
     @Column(name = "updated", nullable = false)
     private Instant updated;
 
+    @Size(max = 10)
+    @NotNull
+    @Column(name = "sender_id", nullable = false, length = 10)
+    private String senderId;
+
+    @Size(max = 10)
+    @NotNull
+    @Column(name = "receiver_id", nullable = false, length = 10)
+    private String receiverId;
+
+    @Size(max = 20)
+    @ColumnDefault("'user'")
+    @Column(name = "sender_type", nullable = false, length = 20)
+    private String senderType;
+
+    @Size(max = 20)
+    @ColumnDefault("'user'")
+    @Column(name = "receiver_type", nullable = false, length = 20)
+    private String receiverType;
+
 }
