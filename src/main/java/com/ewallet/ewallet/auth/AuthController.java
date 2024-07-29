@@ -30,28 +30,29 @@ public class AuthController {
 
         if (authData.getUsername() == null || authData.getPassword() == null) {
             return ResponseEntity.status(401)
-                    .body(new ResponseMessage("Đăng nhập thất bại, vui lòng kiểm tra lại thông tin"));
+                    .body(new ResponseMessage("Đăng nhập thất bại, username hoặc password không được để trống!"));
         }
+
+        User user;
 
         if (!EmailValidator.isValid(authData.getUsername())) {
-            return ResponseEntity.status(401)
-                    .body(new ResponseMessage("Đăng nhập thất bại, vui lòng kiểm tra lại thông tin"));
+            user = userRepository.findByUserName(authData.getUsername());
+        } else {
+            user = userRepository.findByEmail(authData.getUsername()).orElse(null);
         }
 
-        Optional<User> user = userRepository.findByEmail(authData.getUsername());
 
-        if (user.isEmpty()) {
+        if (user == null) {
             return ResponseEntity.status(401)
                     .body(new ResponseMessage("Tài khoản không tồn tại trong hệ thống"));
         }
 
-        if (bCryptPasswordEncoder.matches(authData.getPassword(), user.get().getPassword())) {
-            user.get().setPassword(null);
-            String token = JwtUtil.generateToken(user.orElse(null));
+        if (bCryptPasswordEncoder.matches(authData.getPassword(), user.getPassword())) {
+            String token = JwtUtil.generateToken(user);
             return ResponseEntity.ok()
                     .header("Set-Cookie", "token=" + token + "; Path=/; SameSite=None; Secure; Max-Age=99999;")
                     .body(ObjectUtil.mergeObjects(
-                            ObjectUtil.wrapObject("user", userMapperImpl.toDto(user.get())),
+                            ObjectUtil.wrapObject("user", userMapperImpl.toDto(user)),
                             new ResponseMessage("Đăng nhập thành công"),
                             ObjectUtil.wrapObject("token", token)));
         } else {
