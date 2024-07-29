@@ -2,8 +2,8 @@ package com.ewallet.ewallet.service;
 
 import com.ewallet.ewallet.dto.mapper.TransactionMapper;
 import com.ewallet.ewallet.dto.mapper.WalletTransactionMapperImpl;
-import com.ewallet.ewallet.dto.response.TransactionResponse;
 import com.ewallet.ewallet.dto.response.WalletTransactionDto;
+import com.ewallet.ewallet.models.Transaction;
 import com.ewallet.ewallet.repository.TransactionRepository;
 import com.ewallet.ewallet.repository.WalletTransactionRepository;
 import lombok.AllArgsConstructor;
@@ -38,5 +38,14 @@ public class TransactionService {
         // TODO: Xử lý các loại giao dịch khác nếu cần
 
         return null;
+    }
+
+    public void refund(Transaction transaction) {
+        if (transaction.getTransactionTarget().equals("wallet")) {
+            walletTransactionService.refund(transaction);
+        }
+        else {
+            throw new RuntimeException("Transaction target not found");
+        }
     }
 }

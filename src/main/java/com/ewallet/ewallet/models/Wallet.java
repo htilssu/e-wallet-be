@@ -43,7 +43,9 @@ public class Wallet {
     private double balance;
 
     public void sendMoneyTo(Wallet receiverWallet, double money) {
-        this.balance -= money;
-        receiverWallet.balance += money;
+        if (balance >= money) {
+            balance -= money;
+            receiverWallet.balance += money;
+        }
     }
 }

@@ -6,6 +6,7 @@ import com.ewallet.ewallet.dto.response.RefundResponse;
 import com.ewallet.ewallet.models.Transaction;
 import com.ewallet.ewallet.payment.request.PaymentRequestRepository;
 import com.ewallet.ewallet.repository.TransactionRepository;
+import com.ewallet.ewallet.service.TransactionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,13 +20,16 @@ public class RefundController {
     private final TransactionRepository transactionRepository;
     private final TransactionMapperImpl transactionMapperImpl;
     private final PaymentRequestRepository paymentRequestRepository;
+    private final TransactionService transactionService;
 
     public RefundController(TransactionRepository transactionRepository,
             TransactionMapperImpl transactionMapperImpl,
-            PaymentRequestRepository paymentRequestRepository) {
+            PaymentRequestRepository paymentRequestRepository,
+            TransactionService transactionService) {
         this.transactionRepository = transactionRepository;
         this.transactionMapperImpl = transactionMapperImpl;
         this.paymentRequestRepository = paymentRequestRepository;
+        this.transactionService = transactionService;
     }
 
     @PostMapping
@@ -35,7 +39,8 @@ public class RefundController {
         }
 
 
-        Transaction transaction;
+        Transaction transaction = null;
+
         if (transactionRequest.getTransactionId() != null) {
             var transactionOptional = transactionRepository.findById(
                     transactionRequest.getTransactionId());
@@ -45,7 +50,7 @@ public class RefundController {
             transaction = transactionOptional.get();
         }
 
-        if (transactionRequest.getOrderId() != null) {
+        if (transactionRequest.getOrderId() != null && transaction == null) {
             var paymentRequestOptional = paymentRequestRepository.findById(
                     transactionRequest.getOrderId());
             if (paymentRequestOptional.isEmpty()) {
@@ -56,28 +61,26 @@ public class RefundController {
             transaction = paymentRequest.getTransaction();
 
         }
-        else {
-            return ResponseEntity.badRequest().build();
-        }
-
 
         switch (transaction.getStatus()) {
             case "REFUNDED":
-                return ResponseEntity.badRequest().body(
+                return ResponseEntity.ok().body(
                         new RefundResponse(transactionMapperImpl.toResponse(transaction),
                                 "Giao dịch đã được hoàn tiền trước đó"));
             case "PENDING":
-                return ResponseEntity.badRequest().body(
+                return ResponseEntity.ok().body(
                         new RefundResponse(transactionMapperImpl.toResponse(transaction),
                                 "Giao dịch đang chờ xử lý"));
             case "FAILED":
-                return ResponseEntity.badRequest().body(
+                return ResponseEntity.ok().body(
                         new RefundResponse(transactionMapperImpl.toResponse(transaction),
                                 "Giao dịch đã thất bại"));
             case "SUCCESS":
+                transactionService.refund(transaction);
+
                 break;
             default:
-                return ResponseEntity.badRequest().body(
+                return ResponseEntity.ok().body(
                         new RefundResponse(transactionMapperImpl.toResponse(transaction),
                                 "Giao dịch không hợp lệ"));
         }

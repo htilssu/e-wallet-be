@@ -1,7 +1,11 @@
 package com.ewallet.ewallet.service;
 
 import com.ewallet.ewallet.dto.mapper.WalletTransactionMapper;
+import com.ewallet.ewallet.models.Transaction;
+import com.ewallet.ewallet.models.Wallet;
 import com.ewallet.ewallet.repository.WalletTransactionRepository;
+import com.ewallet.ewallet.transaction.exception.TransactionNotFoundException;
+import com.ewallet.ewallet.transfer.exceptions.InsufficientBalanceException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,4 +17,35 @@ public class WalletTransactionService {
     private final WalletService walletService;
     private final WalletTransactionRepository walletTransactionRepository;
 
+    /**
+     * Hoàn tiền cho giao dịch qua ví
+     * nếu không tìm thấy giao dịch thì sẽ trả về {@link TransactionNotFoundException},
+     * hoặc nếu tiền của người nhận tiền không đủ số dư để hoàn thì sẽ báo lỗi
+     * {@link InsufficientBalanceException}
+     *
+     * @param transaction giao dịch cần hoàn tiền
+     *
+     * @throws TransactionNotFoundException nếu không tìm thấy giao dịch
+     * @throws InsufficientBalanceException nếu không đủ tiền để hoàn tiền
+     */
+    public void refund(Transaction transaction) throws TransactionNotFoundException,
+                                                       InsufficientBalanceException {
+        var walletTransaction = walletTransactionRepository.findById(transaction.getId()).orElse(
+                null);
+        if (walletTransaction == null) {
+            throw new TransactionNotFoundException("Không thể tìm thấy giao dịch");
+        }
+
+        final Wallet senderWallet = walletTransaction.getSenderWallet();
+        final Wallet receiverWallet = walletTransaction.getReceiverWallet();
+
+        if (receiverWallet.getBalance() <= walletTransaction.getTransaction().getMoney()
+                .doubleValue()) {
+            throw new InsufficientBalanceException("Không đủ tiền để hoàn tiền");
+        }
+
+        receiverWallet.sendMoneyTo(senderWallet,
+                walletTransaction.getTransaction().getMoney().doubleValue());
+
+    }
 }
