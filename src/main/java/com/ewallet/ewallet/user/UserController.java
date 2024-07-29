@@ -1,7 +1,7 @@
 package com.ewallet.ewallet.user;
 
 import com.ewallet.ewallet.dto.mapper.UserMapperImpl;
-import com.ewallet.ewallet.model.response.ResponseMessage;
+import com.ewallet.ewallet.dto.response.ResponseMessage;
 import com.ewallet.ewallet.models.User;
 import com.ewallet.ewallet.dto.response.UserDto;
 import com.ewallet.ewallet.models.Wallet;

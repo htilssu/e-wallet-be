@@ -32,7 +32,7 @@ public class UserDto implements Serializable {
     @Size(max = 255)
     private String email;
     @Size(max = 50)
-    private String userName;
+    private String username;
     @NotNull
     @Size(max = 255)
     private String password;

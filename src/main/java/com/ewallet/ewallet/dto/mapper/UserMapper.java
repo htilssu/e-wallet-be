@@ -30,8 +30,10 @@ public interface UserMapper {
     }
 
     @Mappings(
-            @Mapping(target = "dob", ignore = true)
-    )
+            {
+                    @Mapping(target = "dob", ignore = true),
+                    @Mapping(target = "userName", source = "username")
+            })
     User toEntity(com.ewallet.ewallet.dto.request.UserDto userDto);
     com.ewallet.ewallet.dto.request.UserDto toDtoRequest(User user);
     @BeanMapping(

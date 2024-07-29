@@ -2,7 +2,7 @@ package com.ewallet.ewallet.auth;
 
 import com.ewallet.ewallet.dto.mapper.UserMapperImpl;
 import com.ewallet.ewallet.dto.request.UserDto;
-import com.ewallet.ewallet.model.response.ResponseMessage;
+import com.ewallet.ewallet.dto.response.ResponseMessage;
 import com.ewallet.ewallet.models.User;
 import com.ewallet.ewallet.user.UserRepository;
 import com.ewallet.ewallet.util.JwtUtil;
@@ -76,7 +76,7 @@ public class AuthController {
             return ResponseEntity.ok(new ResponseMessage("Người dùng đã tồn tại"));
         }
 
-        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        userEntity.setPassword(bCryptPasswordEncoder.encode(userEntity.getPassword()));
         try {
             userRepository.save(userEntity);
             return ResponseEntity.ok(new ResponseMessage("Đăng ký thành công"));
