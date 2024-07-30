@@ -71,7 +71,7 @@ public class PaymentRequest {
     private String returnUrl;
 
     @Size(max = 300)
-    @Column(name = "success_Url", length = 300)
+    @Column(name = "success_url", length = 300)
     private String successUrl;
 
     @Column(name = "voucher_discount", precision = 10, scale = 2)

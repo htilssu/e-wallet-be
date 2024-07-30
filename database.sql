@@ -323,6 +323,7 @@ CREATE TABLE "payment_request"
     voucher_name            varchar(100)   NULL,
     voucher_code            varchar(100)   NULL,
     order_id                varchar(50)    NULL,
+    success_url             varchar(300)   NULL,
     return_url              varchar(300)   NULL,
     voucher_discount        numeric(10, 2) NULL,
     external_transaction_id varchar(50)    NULL,

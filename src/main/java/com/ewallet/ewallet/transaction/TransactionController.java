@@ -3,12 +3,13 @@ package com.ewallet.ewallet.transaction;
 import com.ewallet.ewallet.dto.mapper.TransactionMapper;
 import com.ewallet.ewallet.models.Transaction;
 import com.ewallet.ewallet.repository.TransactionRepository;
-import com.ewallet.ewallet.service.TransactionService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @AllArgsConstructor
@@ -16,7 +17,6 @@ import java.util.Map;
 @RequestMapping(value = "/api/v1/transaction", produces = "application/json; charset=UTF-8")
 public class TransactionController {
 
-    private final TransactionService transactionService;
     private final TransactionRepository transactionRepository;
     private final TransactionMapper transactionMapper;
 
@@ -33,13 +33,15 @@ public class TransactionController {
     }
 
     @GetMapping("/history")
-    public Transaction getAllTransaction(@RequestParam Map<String, String> allParams,
+    public List<?> getAllTransaction(@RequestParam Map<String, String> allParams,
             Authentication authentication) {
         int offset = Integer.parseInt(allParams.get("offset"));
+        int page = Integer.parseInt(allParams.get("page"));
         String id = ((String) authentication.getPrincipal());
 
+        return transactionRepository.findBySenderIdOrReceiverId(id, id,
+                Pageable.ofSize(offset).withPage(page));
 
-        return null;
     }
 
 }

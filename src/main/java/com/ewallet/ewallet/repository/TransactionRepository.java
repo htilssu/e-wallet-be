@@ -1,9 +1,14 @@
 package com.ewallet.ewallet.repository;
 
 import com.ewallet.ewallet.models.Transaction;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface TransactionRepository extends CrudRepository<Transaction, String> {
+import java.util.List;
 
+public interface TransactionRepository extends JpaRepository<Transaction, String> {
 
+    List<Transaction> findBySenderIdOrReceiverId(String senderId,
+            String receiverId,
+            Pageable pageable);
 }
