@@ -3,6 +3,8 @@ package com.ewallet.ewallet.models;
 import com.ewallet.ewallet.dto.response.AtmCardDto;
 import org.mapstruct.*;
 
+import java.util.List;
+
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE,
         componentModel = MappingConstants.ComponentModel.SPRING)
 public interface AtmCardMapper {
@@ -15,4 +17,6 @@ public interface AtmCardMapper {
     AtmCard partialUpdate(
             AtmCardDto atmCardDto,
             @MappingTarget AtmCard atmCard);
+
+    List<AtmCardDto> usersToUserDTOs(List<AtmCard> users);
 }
