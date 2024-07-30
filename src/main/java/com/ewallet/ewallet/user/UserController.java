@@ -2,9 +2,10 @@ package com.ewallet.ewallet.user;
 
 import com.ewallet.ewallet.dto.mapper.UserMapperImpl;
 import com.ewallet.ewallet.dto.response.ResponseMessage;
-import com.ewallet.ewallet.models.User;
 import com.ewallet.ewallet.dto.response.UserDto;
+import com.ewallet.ewallet.models.User;
 import com.ewallet.ewallet.models.Wallet;
+import com.ewallet.ewallet.util.ObjectUtil;
 import com.ewallet.ewallet.wallet.WalletRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +25,6 @@ public class UserController {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final UserMapperImpl userMapperImpl;
 
-
     @GetMapping()
     public ResponseEntity<UserDto> getUser(Authentication authentication) {
         Optional<User> user = userRepository.findById((String) authentication.getPrincipal());
@@ -37,7 +37,8 @@ public class UserController {
 
     @GetMapping("/wallet")
     public ResponseEntity<Wallet> getWallet(Authentication authentication) {
-        Optional<Wallet> wallet = walletRepository.findByOwnerIdAndOwnerType((String) authentication.getPrincipal(), "user");
+        Optional<Wallet> wallet = walletRepository.findByOwnerIdAndOwnerType(
+                (String) authentication.getPrincipal(), "user");
         return wallet.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
@@ -56,7 +57,8 @@ public class UserController {
                     .body(new ResponseMessage("Mật khẩu mới không được trùng với mật khẩu cũ"));
         }
 
-        if (!bCryptPasswordEncoder.matches(passwordData.getOldPassword(), user.get().getPassword())) {
+        if (!bCryptPasswordEncoder.matches(passwordData.getOldPassword(),
+                user.get().getPassword())) {
             return ResponseEntity.badRequest()
                     .body(new ResponseMessage("Mật khẩu cũ không đúng"));
         }
@@ -68,5 +70,16 @@ public class UserController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseMessage("Đổi mật khẩu thất bại"));
         }
+    }
+
+    @GetMapping("/check/{id}")
+    public ResponseEntity<?> checkUser(@PathVariable String id) {
+        Optional<User> user = userRepository.findByEmail(id);
+        if (user.isPresent()) {
+            final User userEntity = user.get();
+            return ResponseEntity.ok(ObjectUtil.wrapObject("fullName",
+                    userEntity.getLastName() + " " + userEntity.getFirstName()));
+        }
+        return ResponseEntity.notFound().build();
     }
 }
