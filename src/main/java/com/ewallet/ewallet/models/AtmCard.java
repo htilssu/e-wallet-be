@@ -26,8 +26,9 @@ public class AtmCard {
     @Column(name = "id", nullable = false)
     private Integer id;
 
+    @NotNull
     @Column(name = "atm_id", nullable = false)
-    private int atmId;
+    private Integer atmId;
 
     @Size(max = 16)
     @NotNull
