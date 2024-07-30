@@ -77,8 +77,9 @@ public class UserController {
         Optional<User> user = userRepository.findByEmail(id);
         if (user.isPresent()) {
             final User userEntity = user.get();
-            return ResponseEntity.ok(ObjectUtil.wrapObject("fullName",
-                    userEntity.getLastName() + " " + userEntity.getFirstName()));
+            return ResponseEntity.ok(ObjectUtil.mergeObjects(ObjectUtil.wrapObject("fullName",
+                            userEntity.getLastName() + " " + userEntity.getFirstName()),
+                    ObjectUtil.wrapObject("isVerified", userEntity.getIsVerified())));
         }
         return ResponseEntity.notFound().build();
     }
