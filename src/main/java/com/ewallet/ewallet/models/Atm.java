@@ -25,4 +25,8 @@ public class Atm {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @Size(max = 255)
+    @Column(name = "icon")
+    private String icon;
+
 }
