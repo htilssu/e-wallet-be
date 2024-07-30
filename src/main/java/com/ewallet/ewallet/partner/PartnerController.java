@@ -1,6 +1,7 @@
 package com.ewallet.ewallet.partner;
 
 import com.ewallet.ewallet.dto.mapper.PartnerMapperImpl;
+import com.ewallet.ewallet.dto.response.PartnerDto;
 import com.ewallet.ewallet.dto.response.PartnerRequest;
 import com.ewallet.ewallet.dto.response.ResponseMessage;
 import com.ewallet.ewallet.models.Partner;
@@ -13,6 +14,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -56,9 +60,19 @@ public class PartnerController {
         }
     }
 
-    @GetMapping
-    public ResponseEntity<?> getPartner(Authentication authentication) {
+    @GetMapping("/{service}")
+    public ResponseEntity<?> getPartner(Authentication authentication, @PathVariable String service) {
         Partner partner = (Partner) authentication.getPrincipal();
         return ResponseEntity.ok(partnerMapperImpl.toDto(partner));
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllPartner() {
+        final List<Partner> partnerList = partnerRepository.findAll();
+        List<PartnerDto> partnerDtoList = new ArrayList<>();
+        for (Partner partner : partnerList) {
+            partnerDtoList.add(partnerMapperImpl.toDto(partner));
+        }
+        return ResponseEntity.ok(partnerDtoList);
     }
 }
