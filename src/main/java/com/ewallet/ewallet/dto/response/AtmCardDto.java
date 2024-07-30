@@ -25,7 +25,6 @@ public class AtmCardDto implements Serializable {
     @Size(max = 16)
     private String cardNumber;
     private int atmId;
-    @NotNull
     @Size(max = 3)
     private String ccv;
     @NotNull

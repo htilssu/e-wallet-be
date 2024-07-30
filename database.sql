@@ -468,7 +468,7 @@ create table atm_card
     id          serial primary key,
     atm_id      int references atm (id),
     card_number varchar(16)  not null,
-    ccv         varchar(3)   not null,
+    ccv         varchar(3),
     holder_name varchar(255) not null,
     owner_id    char(10) references "user" (id),
     expired     varchar(200) not null,

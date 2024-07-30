@@ -36,7 +36,6 @@ public class AtmCard {
     private String cardNumber;
 
     @Size(max = 3)
-    @NotNull
     @Column(name = "ccv", nullable = false, length = 3)
     private String ccv;
 
