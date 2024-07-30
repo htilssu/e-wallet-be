@@ -89,9 +89,11 @@ public class AuthController {
 
         }
 
-        userCheck = userRepository.findByUserName(user.getUsername());
-        if (userCheck != null) {
-            return ResponseEntity.ok(new ResponseMessage("Tên đăng nhập đã tồn tại"));
+        if (user.getUsername() != null){
+            userCheck = userRepository.findByUserName(user.getUsername());
+            if (userCheck != null) {
+                return ResponseEntity.ok(new ResponseMessage("Tên đăng nhập đã tồn tại"));
+            }
         }
 
         userEntity.setPassword(bCryptPasswordEncoder.encode(userEntity.getPassword()));
