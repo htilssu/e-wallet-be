@@ -27,7 +27,7 @@ public class AtmCard {
     private Integer id;
 
     @Column(name = "atm_id", nullable = false)
-    private String atm_id;
+    private String atmId;
 
     @Size(max = 16)
     @NotNull
