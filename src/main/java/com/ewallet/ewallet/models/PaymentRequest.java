@@ -70,6 +70,10 @@ public class PaymentRequest {
     @Column(name = "return_url", length = 300)
     private String returnUrl;
 
+    @Size(max = 300)
+    @Column(name = "success_Url", length = 300)
+    private String successUrl;
+
     @Column(name = "voucher_discount", precision = 10, scale = 2)
     private BigDecimal voucherDiscount;
 

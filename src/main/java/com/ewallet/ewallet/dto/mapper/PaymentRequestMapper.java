@@ -23,5 +23,6 @@ public interface PaymentRequestMapper {
             PaymentRequestDto paymentRequestDto,
             @MappingTarget PaymentRequest paymentRequest);
 
+    @Mapping(target = "successUrl", source = "success")
     PaymentRequest toEntity(PaymentRequestData paymentRequestData);
 }
