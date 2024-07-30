@@ -454,6 +454,7 @@ CREATE TABLE group_fund_transaction
     created        date    NOT NULL DEFAULT CURRENT_DATE
 );
 
+drop table if exists atm cascade;
 
 create table atm
 (

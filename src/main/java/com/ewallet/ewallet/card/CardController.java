@@ -1,6 +1,5 @@
 package com.ewallet.ewallet.card;
 
-import com.ewallet.ewallet.atm.AtmController;
 import com.ewallet.ewallet.dto.response.AtmCardDto;
 import com.ewallet.ewallet.dto.response.ResponseMessage;
 import com.ewallet.ewallet.models.Atm;
@@ -50,7 +49,6 @@ public class CardController {
 
         final AtmCard atmCard = atmCardMapperImpl.toEntity(atmCardDto);
         atmCard.setOwner(user);
-        atmCard.setAtm(atm.get());
 
 
         try {

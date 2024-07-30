@@ -26,9 +26,8 @@ public class AtmCard {
     @Column(name = "id", nullable = false)
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "atm_id")
-    private Atm atm;
+    @Column(name = "atm_id", nullable = false)
+    private String atm_id;
 
     @Size(max = 16)
     @NotNull
@@ -36,7 +35,7 @@ public class AtmCard {
     private String cardNumber;
 
     @Size(max = 3)
-    @Column(name = "ccv", nullable = false, length = 3)
+    @Column(name = "ccv", length = 3)
     private String ccv;
 
     @Size(max = 255)
