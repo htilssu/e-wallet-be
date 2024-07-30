@@ -464,10 +464,11 @@ create table atm
 );
 
 
+
 create table atm_card
 (
     id          serial primary key,
-    atm_id      int references atm (id),
+    atm_id      int /*references atm (id)*/,
     card_number varchar(16)  not null,
     ccv         varchar(3),
     holder_name varchar(255) not null,
