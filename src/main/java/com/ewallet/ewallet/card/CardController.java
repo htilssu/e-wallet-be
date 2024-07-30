@@ -79,4 +79,25 @@ public class CardController {
 
     }
 
+    @DeleteMapping("/{cardNumber}")
+    public ResponseEntity<?> deleteCard(@PathVariable String cardNumber,
+            Authentication authentication) {
+        if (cardNumber == null) {
+            return ResponseEntity.badRequest().body(new ResponseMessage("Dữ liệu không hợp lệ"));
+        }
+
+        final AtmCard atmCard = atmCardRepository.findByCardNumber(cardNumber);
+
+        if (atmCard == null) {
+            return ResponseEntity.ok(new ResponseMessage("Thẻ không tồn tại"));
+        }
+        String userId = (String) authentication.getPrincipal();
+        if (!atmCard.getOwner().getId().equals(userId)) return ResponseEntity.ok(
+                new ResponseMessage("Không thể xóa thẻ của người khác"));
+
+        atmCardRepository.delete(atmCard);
+
+        return ResponseEntity.ok(new ResponseMessage("Xóa thẻ thành công"));
+    }
+
 }
