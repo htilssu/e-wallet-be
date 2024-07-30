@@ -26,20 +26,21 @@ public class OTPController {
     private final SmsService smsService;
 
     @PostMapping
-    public ResponseEntity<?> sendOtp(@RequestBody @Nullable OTPData otpData,
+    public ResponseEntity<?> sendOtp(@RequestBody @Nullable OTPSend otpSend,
             Authentication authentication) {
 
-        if (otpData == null) {
+        if (otpSend == null) {
             return ResponseEntity.badRequest()
                     .body(new ResponseMessage("Data is invalid"));
         }
 
-        switch (otpData.getOtpType()) {
+        switch (otpSend.getOtpType()) {
             case "email":
-                otpManager.send(emailService, otpData, authentication);
                 Optional<User> user = userRepository.findById((String) authentication.getPrincipal());
 
                 if (user.isPresent()) {
+                    otpSend.setSendTo(user.get().getEmail());
+                    otpManager.send(emailService, otpSend, authentication);
                     return ResponseEntity.ok(ObjectUtil.mergeObjects(
                             new ResponseMessage("OTP đã được gửi đến email của bạn!"),
                             ObjectUtil.wrapObject("email", user.get().getEmail()),
@@ -50,7 +51,7 @@ public class OTPController {
                 }
 
             case "phone":
-                otpManager.send(smsService, otpData, authentication);
+                otpManager.send(smsService, otpSend, authentication);
                 return ResponseEntity.ok(new ResponseMessage("OTP đã được gửi đến số điện thoại của bạn!"));
 
             default:
@@ -60,7 +61,7 @@ public class OTPController {
     }
 
     @PostMapping("/verify")
-    public ResponseEntity<ResponseMessage> verifyOtp(@RequestBody OTPData otpData,
+    public ResponseEntity<ResponseMessage> verifyOtp(@RequestBody OTPVerify otpData,
             Authentication authentication) {
         if (authentication != null) {
             String userId = (String) authentication.getPrincipal();
