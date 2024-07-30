@@ -9,12 +9,18 @@ import org.mapstruct.*;
         componentModel = MappingConstants.ComponentModel.SPRING)
 public interface PaymentRequestMapper {
 
+    @Mapping(source = "partnerAvatar", target = "partner.avatar")
+    @Mapping(source = "partnerPartnerType", target = "partner.partnerType")
+    @Mapping(source = "partnerEmail", target = "partner.email")
+    @Mapping(source = "partnerName", target = "partner.name")
+    @Mapping(source = "partnerId", target = "partner.id")
     PaymentRequest toEntity(PaymentRequestDto paymentRequestDto);
 
-    @Mappings({
-            @Mapping(target = "created", source = "created", dateFormat = "yyyy-MM-dd HH:mm:ss"),
-            @Mapping(target = "updated", source = "updated", dateFormat = "yyyy-MM-dd HH:mm:ss")
-    })
+    @Mapping(source = "partner.avatar", target = "partnerAvatar")
+    @Mapping(source = "partner.partnerType", target = "partnerPartnerType")
+    @Mapping(source = "partner.email", target = "partnerEmail")
+    @Mapping(source = "partner.name", target = "partnerName")
+    @Mapping(source = "partner.id", target = "partnerId")
     PaymentRequestDto toDto(PaymentRequest paymentRequest);
 
     @BeanMapping(

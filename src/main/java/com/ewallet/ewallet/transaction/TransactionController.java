@@ -41,7 +41,6 @@ public class TransactionController {
 
         return transactionRepository.findBySenderIdOrReceiverId(id, id,
                 Pageable.ofSize(offset).withPage(page));
-
     }
 
 }

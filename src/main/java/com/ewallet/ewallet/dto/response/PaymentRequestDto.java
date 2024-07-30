@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
+import java.time.Instant;
 
 /**
  * DTO for {@link PaymentRequest}
@@ -43,4 +44,9 @@ public class PaymentRequestDto implements Serializable {
     private String externalTransactionId;
     private String created;
     private String updated;
+    private String partnerId;
+    private String partnerName;
+    private String partnerEmail;
+    private String partnerPartnerType;
+    private String partnerAvatar;
 }

@@ -56,7 +56,7 @@ public class ApiServiceFilter implements Filter {
                         Collections.singleton(new SimpleGrantedAuthority("ROLE_PARTNER"))));
             }
 
-            req.setAttribute("partner", partner);
+            req.setAttribute("partner", partner.get());
             chain.doFilter(request, response);
             return;
         }
