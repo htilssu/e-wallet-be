@@ -458,22 +458,23 @@ CREATE TABLE group_fund_transaction
 create table atm
 (
     id   serial primary key,
-    name varchar(255) not null
+    name varchar(255) not null,
+    icon varchar(255)
 );
+
 
 create table atm_card
 (
     id          serial primary key,
     atm_id      int references atm (id),
     card_number varchar(16)  not null,
-    csv         varchar(3)   not null,
+    ccv         varchar(3)   not null,
     holder_name varchar(255) not null,
     owner_id    char(10) references "user" (id),
-    expired     date         not null,
+    expired     varchar(200) not null,
     created     date         not null default current_date,
     unique (card_number)
 );
-
 
 
 
@@ -487,3 +488,10 @@ values ('MIN_TRANSFER', 'Số tiền tối thiểu cho mỗi giao dịch', 100),
        ('MAX_TRANSFER', 'Số tiền tối đa cho mỗi giao dịch', 1000000000),
        ('MIN_WITHDRAW', 'Số tiền tối thiểu cho mỗi giao dịch', 10000),
        ('MAX_WITHDRAW', 'Số tiền tối đa cho mỗi giao dịch', 1000000000);
+
+
+insert into atm
+values (1,
+        'Vietcombank'),
+       (2, 'Sacombank'),
+       (3, 'MBBank')
