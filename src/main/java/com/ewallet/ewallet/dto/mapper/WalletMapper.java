@@ -9,9 +9,5 @@ import org.mapstruct.Mappings;
 @Mapper(componentModel = "spring")
 public interface WalletMapper {
 
-    @Mappings({
-            @Mapping(ignore = true, target = "user"),
-            @Mapping(ignore = true, target = "partner"),
-    })
     WalletResponse toResponse(Wallet wallet);
 }

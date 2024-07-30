@@ -9,8 +9,6 @@ import lombok.Data;
 @Data
 public class WalletResponse {
 
-    private User user;
-    private Partner partner;
     private int id;
     private String ownerId;
     private String ownerType;

@@ -94,7 +94,8 @@ public class TransferController {
 
         Wallet senderWallet = optionalSenderWallet.get();
 
-        if (senderWallet.getBalance() < data.getMoney() || senderWallet.getBalance() <= 0) {
+        if (senderWallet.getBalance() < data.getMoney() || senderWallet.getBalance()
+                <= 0) {
             return ResponseEntity.badRequest()
                     .body(new ResponseMessage("Số dư không đủ"));
         }

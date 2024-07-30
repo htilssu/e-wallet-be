@@ -1,12 +1,11 @@
 package com.ewallet.ewallet.transaction;
 
 import com.ewallet.ewallet.dto.mapper.TransactionMapper;
-import com.ewallet.ewallet.dto.response.WalletTransactionDto;
 import com.ewallet.ewallet.models.Transaction;
 import com.ewallet.ewallet.repository.TransactionRepository;
 import com.ewallet.ewallet.service.TransactionService;
-import com.ewallet.ewallet.transaction.exception.TransactionNotFoundException;
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,11 +21,14 @@ public class TransactionController {
     private final TransactionMapper transactionMapper;
 
     @GetMapping("/{id}")
-    public WalletTransactionDto getTransaction(@PathVariable String id) {
-        Transaction transaction = transactionRepository.findById(id)
-                .orElseThrow(() -> new TransactionNotFoundException("Không tìm thấy giao dịch"));
+    public ResponseEntity<Object> getTransaction(@PathVariable String id) {
+        Transaction transaction = transactionRepository.findById(id).orElse(null);
 
-        return transactionService.getTransactionDetail(id);
+        if (transaction == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(transactionMapper.toResponse(transaction));
 
     }
 

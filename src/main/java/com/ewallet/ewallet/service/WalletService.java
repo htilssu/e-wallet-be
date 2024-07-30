@@ -14,25 +14,12 @@ public class WalletService {
 
     private final WalletMapper walletMapper;
     private final WalletRepository walletRepository;
-    private final UserRepository userRepository;
-    private final PartnerRepository partnerRepository;
 
     public WalletResponse getWallet(int id) {
         var wallet = walletRepository.findById(String.valueOf(id))
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy ví"));
 
-        var walletResponse = walletMapper.toResponse(wallet);
 
-        if ("user".equals(wallet.getOwnerType())) {
-            var user = userRepository.findById(wallet.getOwnerId())
-                    .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
-            walletResponse.setUser(user);
-        } else {
-            var partner = partnerRepository.findById(wallet.getOwnerId())
-                    .orElseThrow(() -> new RuntimeException("Không tìm thấy đối tác"));
-            walletResponse.setPartner(partner);
-        }
-
-        return walletResponse;
+        return walletMapper.toResponse(wallet);
     }
 }
