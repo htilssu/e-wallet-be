@@ -4,6 +4,7 @@ import com.ewallet.ewallet.constants.Constant;
 import com.ewallet.ewallet.dto.mapper.TransactionMapper;
 import com.ewallet.ewallet.dto.request.TransactionRequest;
 import com.ewallet.ewallet.dto.response.ResponseMessage;
+import com.ewallet.ewallet.equity.EquityService;
 import com.ewallet.ewallet.models.Transaction;
 import com.ewallet.ewallet.models.User;
 import com.ewallet.ewallet.models.Wallet;
@@ -33,6 +34,7 @@ public class TransferController {
 
     private final TransactionService transactionService;
     private final ConstantRepository constantRepository;
+    private final EquityService equityService;
     TransactionRepository transactionRepository;
     UserRepository userRepository;
     WalletRepository walletRepository;
@@ -149,6 +151,8 @@ public class TransferController {
             return ResponseEntity.ok()
                     .body(new ResponseMessage("Chuyển tiền thất bại"));
         }
+
+        equityService.updateEquity(transaction);
 
         return ResponseEntity.ok(walletTransactionOptional.get());
     }
