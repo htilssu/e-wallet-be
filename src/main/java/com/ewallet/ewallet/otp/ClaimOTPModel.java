@@ -25,7 +25,7 @@ public class ClaimOTPModel {
             Instant.now().plus(1, ChronoUnit.HOURS));
 
     @DynamoDbIgnore
-    public Boolean isExpired() {
+    public boolean isExpired() {
         return Instant.now().isAfter(DateTimeUtil.convertToDate(expiredAt).toInstant());
     }
 }
