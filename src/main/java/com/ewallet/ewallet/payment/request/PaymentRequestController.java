@@ -77,7 +77,7 @@ public class PaymentRequestController {
     public ResponseEntity<?> createPayment(@RequestBody PaymentRequestData paymentRequest,
             HttpServletRequest request) {
         if (paymentRequest == null || paymentRequest.getMoney() <= 0 || paymentRequest.getVoucherId() == null || paymentRequest.getVoucherName() == null) {
-            return ResponseEntity.badRequest().body(null);
+            return ResponseEntity.badRequest().body("Tiền không đươc bé hơn 0, voucherId not null, voucherName not null");
         }
 
         PaymentRequest newPaymentRequest = paymentRequestMapperImpl.toEntity(paymentRequest);

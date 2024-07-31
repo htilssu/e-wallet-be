@@ -89,4 +89,8 @@ public class PaymentRequest {
     @Column(name = "updated", nullable = false)
     private Instant updated;
 
+    @Size(max = 100)
+    @Column(name = "service_name", length = 100)
+    private String serviceName;
+
 }

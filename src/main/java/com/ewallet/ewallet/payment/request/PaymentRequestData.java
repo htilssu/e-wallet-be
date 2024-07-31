@@ -1,5 +1,6 @@
 package com.ewallet.ewallet.payment.request;
 
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -17,4 +18,6 @@ public class PaymentRequestData {
     String success;
     String successUrl;
     String orderId;
+    @Size(max = 100)
+    private String serviceName;
 }

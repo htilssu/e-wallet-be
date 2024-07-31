@@ -320,6 +320,7 @@ CREATE TABLE "payment_request"
 --     invoice_id              varchar(50)    NULL UNIQUE,
     transaction_id          varchar(15)    NULL REFERENCES transaction (id),
     voucher_id              varchar(50)    NULL,
+    service_name            varchar(100)   NUll,
     voucher_name            varchar(100)   NULL,
     voucher_code            varchar(100)   NULL,
     order_id                varchar(50)    NULL,
@@ -333,6 +334,8 @@ CREATE TABLE "payment_request"
     unique (transaction_id),
     unique (id, partner_id)
 );
+
+alter table  payment_request add column service_name varchar(100) NULL;
 
 
 DROP SEQUENCE IF EXISTS order_id_seq;

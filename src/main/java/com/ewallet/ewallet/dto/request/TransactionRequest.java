@@ -1,5 +1,7 @@
 package com.ewallet.ewallet.dto.request;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
@@ -20,4 +22,14 @@ public class TransactionRequest {
      * rút tiền {@code withdraw}
      */
     String transactionType;
+    @NotNull
+    @Size(max = 10)
+    private String senderId;
+    @NotNull
+    @Size(max = 10)
+    private String receiverId;
+    @Size(max = 20)
+    private String senderType;
+    @Size(max = 20)
+    private String receiverType;
 }

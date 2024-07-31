@@ -1,6 +1,8 @@
 package com.ewallet.ewallet.transaction;
 
 import com.ewallet.ewallet.dto.mapper.TransactionMapper;
+import com.ewallet.ewallet.dto.response.ReceiverDto;
+import com.ewallet.ewallet.dto.response.TransactionResponse;
 import com.ewallet.ewallet.models.Transaction;
 import com.ewallet.ewallet.repository.TransactionRepository;
 import lombok.AllArgsConstructor;
@@ -27,8 +29,12 @@ public class TransactionController {
         if (transaction == null) {
             return ResponseEntity.notFound().build();
         }
+        final TransactionResponse transactionResponse = transactionMapper.toResponse(transaction);
+        ReceiverDto receiverDto = null;
+//        if (transactionResponse.get)
 
-        return ResponseEntity.ok(transactionMapper.toResponse(transaction));
+
+        return ResponseEntity.ok(transactionResponse);
 
     }
 

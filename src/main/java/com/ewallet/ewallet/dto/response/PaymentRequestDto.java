@@ -49,4 +49,6 @@ public class PaymentRequestDto implements Serializable {
     private String partnerEmail;
     private String partnerPartnerType;
     private String partnerAvatar;
+    @Size(max = 100)
+    private String serviceName;
 }
