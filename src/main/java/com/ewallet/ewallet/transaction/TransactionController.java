@@ -1,10 +1,15 @@
 package com.ewallet.ewallet.transaction;
 
 import com.ewallet.ewallet.dto.mapper.TransactionMapper;
+import com.ewallet.ewallet.dto.mapper.TransactionMapperImpl;
 import com.ewallet.ewallet.dto.response.ReceiverDto;
 import com.ewallet.ewallet.dto.response.TransactionResponse;
+import com.ewallet.ewallet.models.Partner;
 import com.ewallet.ewallet.models.Transaction;
+import com.ewallet.ewallet.models.User;
+import com.ewallet.ewallet.partner.PartnerRepository;
 import com.ewallet.ewallet.repository.TransactionRepository;
+import com.ewallet.ewallet.user.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @AllArgsConstructor
 @RestController
@@ -21,6 +27,9 @@ public class TransactionController {
 
     private final TransactionRepository transactionRepository;
     private final TransactionMapper transactionMapper;
+    private final TransactionMapperImpl transactionMapperImpl;
+    private final UserRepository userRepository;
+    private final PartnerRepository partnerRepository;
 
     @GetMapping("/{id}")
     public ResponseEntity<Object> getTransaction(@PathVariable String id) {
@@ -31,7 +40,7 @@ public class TransactionController {
         }
         final TransactionResponse transactionResponse = transactionMapper.toResponse(transaction);
         ReceiverDto receiverDto = null;
-//        if (transactionResponse.get)
+        //        if (transactionResponse.get)
 
 
         return ResponseEntity.ok(transactionResponse);
@@ -45,8 +54,27 @@ public class TransactionController {
         int page = Integer.parseInt(allParams.get("page"));
         String id = ((String) authentication.getPrincipal());
 
-        return transactionRepository.findBySenderIdOrReceiverId(id, id,
-                Pageable.ofSize(offset).withPage(page));
+
+        final List<TransactionResponse> listDto = transactionMapperImpl.toListDto(
+                transactionRepository.findBySenderIdOrReceiverId(id, id,
+                        Pageable.ofSize(offset).withPage(page)));
+        for (TransactionResponse transactionRespons : listDto) {
+            if (transactionRespons.getReceiverType().equals("user")) {
+                final Optional<User> byId = userRepository.findById(
+                        transactionRespons.getReceiverId());
+
+                byId.ifPresent(user -> transactionRespons.setReceiverName(
+                        user.getLastName() + " " + user.getFirstName()));
+            }
+            else {
+                final Optional<Partner> byId = partnerRepository.findById(
+                        transactionRespons.getReceiverId());
+                byId.ifPresent(partner -> transactionRespons.setReceiverName(partner.getName()));
+            }
+        }
+
+
+        return listDto;
     }
 
 }
