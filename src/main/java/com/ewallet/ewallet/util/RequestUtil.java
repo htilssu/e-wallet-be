@@ -11,6 +11,8 @@ public class RequestUtil {
             url = new URI(urlString).toURL();
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod(method);
+
+            connection.getResponseCode();
         } catch (URISyntaxException | IOException e) {
             System.out.println(e.getMessage());
         }
