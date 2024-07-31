@@ -79,6 +79,18 @@ public class UserController {
         }
     }
 
+    @GetMapping("/{id}")
+    public UserDto getUserById(@PathVariable String id){
+        if (id != null){
+            final Optional<User> byId =   userRepository.findById(id);
+            if (byId.isPresent()){
+                return userMapperImpl.toDto(byId.get());
+            }
+        }
+
+        return null;
+    }
+
     @GetMapping("/check/{id}")
     public ResponseEntity<?> checkUser(@PathVariable String id) {
         User user = userRepository.findByEmail(id);
