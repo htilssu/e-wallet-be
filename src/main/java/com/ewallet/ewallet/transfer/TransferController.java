@@ -78,9 +78,18 @@ public class TransferController {
                 constantRepository.findById(
                         Constant.MINIMUM_TRANSFER_AMOUNT).orElseThrow();
 
+        final com.ewallet.ewallet.models.Constant maximumTransferConstant = constantRepository.findById(
+                Constant.MAXIMUM_TRANSFER_AMOUNT).orElseThrow();
+
         if (data.getMoney() < minimumTransferConstant.getValue()) {
             return ResponseEntity.badRequest()
                     .body(new ResponseMessage("Số tiền chuyển phải lớn hơn "
+                            + minimumTransferConstant.getValue()));
+        }
+
+        if (data.getMoney() > maximumTransferConstant.getValue()){
+            return  ResponseEntity.badRequest()
+                    .body(new ResponseMessage("Số tiền chuyển phải nhỏ hơn "
                             + minimumTransferConstant.getValue()));
         }
 
