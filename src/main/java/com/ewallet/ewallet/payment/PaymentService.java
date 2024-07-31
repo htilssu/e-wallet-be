@@ -1,6 +1,5 @@
 package com.ewallet.ewallet.payment;
 
-import com.ewallet.ewallet.dto.mapper.TransactionMapperImpl;
 import com.ewallet.ewallet.models.PaymentRequest;
 import com.ewallet.ewallet.models.Transaction;
 import com.ewallet.ewallet.models.Wallet;
@@ -9,29 +8,24 @@ import com.ewallet.ewallet.transfer.exceptions.InsufficientBalanceException;
 import com.ewallet.ewallet.transfer.exceptions.WalletNotFoundException;
 import com.ewallet.ewallet.util.RequestUtil;
 import com.ewallet.ewallet.wallet.WalletRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@AllArgsConstructor
 @Service
 public class PaymentService {
 
     private final WalletRepository walletRepository;
     private final TransactionService transactionService;
-    private final TransactionMapperImpl transactionMapperImpl;
 
-    public PaymentService(WalletRepository walletRepository,
-            TransactionService transactionService, TransactionMapperImpl transactionMapperImpl) {
-        this.walletRepository = walletRepository;
-        this.transactionService = transactionService;
-        this.transactionMapperImpl = transactionMapperImpl;
-    }
-
-    public Transaction makePayment(PaymentRequest paymentRequest, Authentication authentication) throws
-                                                                                          InsufficientBalanceException,
-                                                                                          WalletNotFoundException {
+    public Transaction makePayment(PaymentRequest paymentRequest,
+            Authentication authentication) throws
+                                           InsufficientBalanceException,
+                                           WalletNotFoundException {
         final String userId = (String) authentication.getPrincipal();
         final Optional<Wallet> userWallet = walletRepository.findByOwnerIdAndOwnerType(userId,
                 "user");
@@ -49,6 +43,9 @@ public class PaymentService {
         paymentRequest.setStatus("SUCCESS");
 
         RequestUtil.sendRequest(paymentRequest.getSuccessUrl(), "POST");
+        RequestUtil.sendRequest(
+                "https://voucher-server-alpha.vercel.app/api/vouchers/getVoucherByVoucherID/" + paymentRequest.getVoucherId(),
+                "POST");
         return transactionService.createTransaction(userId, paymentRequest,
                 sender, receiver);
     }
