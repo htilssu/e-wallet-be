@@ -13,6 +13,7 @@ public class TransactionRequest {
      */
     String sendTo;
     double money;
+    String type;
     String currency;
     /**
      * Loại giao dịch ví dụ như nạp tiền {@code topup}, chuyển tiền {@code transfer},

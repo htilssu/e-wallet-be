@@ -57,6 +57,7 @@ public class OTPManager {
      */
     public boolean verify(String userId, OTPData otpSend) {
         var userClaim = claimOTPRepository.findOtpByUserId(userId).join();
+        if (userClaim == null) return false;
         if (userClaim.isExpired()) return false;
         final boolean isMatch = otpSend.getOtp().equals(userClaim.getOtp());
         if (isMatch) {

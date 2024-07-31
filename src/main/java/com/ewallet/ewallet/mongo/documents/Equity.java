@@ -15,6 +15,7 @@ import java.util.List;
 public class Equity {
 
     String user;
+    String userType;
     Integer month;
     Integer year;
     List<EquityItem> equityItemList;

@@ -1,8 +1,11 @@
 package com.ewallet.ewallet.payment.request;
 
 import com.ewallet.ewallet.dto.mapper.PaymentRequestMapperImpl;
+import com.ewallet.ewallet.dto.mapper.TransactionMapperImpl;
 import com.ewallet.ewallet.models.Partner;
 import com.ewallet.ewallet.models.PaymentRequest;
+import com.ewallet.ewallet.models.Transaction;
+import com.ewallet.ewallet.payment.PaymentService;
 import com.ewallet.ewallet.util.ObjectUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
@@ -20,13 +23,53 @@ public class PaymentRequestController {
 
     private final PaymentRequestMapperImpl paymentRequestMapperImpl;
     private final HttpServletRequest httpServletRequest;
+    private final PaymentService paymentService;
+    private final TransactionMapperImpl transactionMapperImpl;
     PaymentRequestRepository paymentRequestRepository;
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getOrderById(@PathVariable String id, Authentication authentication) {
         Optional<PaymentRequest> orderOptional = paymentRequestRepository.findById(id);
+        if (orderOptional.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
 
-        return ResponseEntity.ok(orderOptional.map(paymentRequestMapperImpl::toDto).orElse(null));
+        PaymentRequest order = orderOptional.get();
+        return ResponseEntity.ok(paymentRequestMapperImpl.toDto(order));
+    }
+
+    @PostMapping("/{id}")
+    public ResponseEntity<?> makePay(Authentication authentication, @PathVariable String id) {
+        if (id == null) {
+            return ResponseEntity.badRequest().body(null);
+        }
+
+        Optional<PaymentRequest> paymentRequestOptional = paymentRequestRepository.findById(
+                id);
+
+        if (paymentRequestOptional.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        PaymentRequest paymentRequest = paymentRequestOptional.get();
+        if (!paymentRequest.getStatus().equals("PENDING")) {
+            return ResponseEntity.badRequest().body(null);
+        }
+
+        final Partner partner = paymentRequest.getPartner();
+        if (partner == null) {
+            return ResponseEntity.badRequest().body(null);
+        }
+
+        try {
+            final Transaction transaction = paymentService.makePayment(paymentRequest,
+                    authentication);
+
+            return ResponseEntity.ok(transactionMapperImpl.toResponse(transaction));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+
     }
 
     @PostMapping

@@ -84,6 +84,7 @@ public class TransferController {
                             + minimumTransferConstant.getValue()));
         }
 
+
         Optional<Wallet> optionalSenderWallet = walletRepository.findByOwnerIdAndOwnerType(senderId,
                 "user");
 
@@ -100,14 +101,13 @@ public class TransferController {
                     .body(new ResponseMessage("Số dư không đủ"));
         }
 
-        Optional<User> optionalReceiver = userRepository.findByEmail(data.getSendTo());
+        User receiver = userRepository.findByEmail(data.getSendTo());
 
-        if (optionalReceiver.isEmpty()) {
+        if (receiver == null) {
             return ResponseEntity.ok()
                     .body(new ResponseMessage("Không tìm thấy người nhận"));
         }
 
-        User receiver = optionalReceiver.get();
         Optional<Wallet> optionalReceiverWallet = walletRepository.findByOwnerIdAndOwnerType(
                 receiver.getId(), "user");
 
@@ -117,13 +117,13 @@ public class TransferController {
         }
 
         Wallet receiverWallet = optionalReceiverWallet.get();
-        senderWallet.sendMoneyTo(receiverWallet, data.getMoney());
 
         if (Objects.equals(senderWallet.getId(), receiverWallet.getId())) {
             return ResponseEntity.badRequest().body(
                     new ResponseMessage("Không thể chuyển tiền cho chính mình"));
         }
 
+        senderWallet.sendMoneyTo(receiverWallet, data.getMoney());
         Transaction transaction = transactionMapper.toEntity(data);
         transaction.setSenderId(senderId);
         transaction.setReceiverId(receiver.getId());

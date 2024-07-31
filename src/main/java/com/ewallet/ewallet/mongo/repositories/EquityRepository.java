@@ -11,8 +11,7 @@ import java.util.concurrent.CompletableFuture;
 public interface EquityRepository extends MongoRepository<Equity, String> {
 
     Optional<Equity> findByUser(String user);
-    @Async
-    CompletableFuture<Equity> findByUserAndMonthAndYear(String user,
+    Equity findByUserAndMonthAndYear(String user,
             Integer month,
             Integer year);
 }

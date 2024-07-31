@@ -81,12 +81,11 @@ public class UserController {
 
     @GetMapping("/check/{id}")
     public ResponseEntity<?> checkUser(@PathVariable String id) {
-        Optional<User> user = userRepository.findByEmail(id);
-        if (user.isPresent()) {
-            final User userEntity = user.get();
+        User user = userRepository.findByEmail(id);
+        if (user != null) {
             return ResponseEntity.ok(ObjectUtil.mergeObjects(ObjectUtil.wrapObject("fullName",
-                            userEntity.getLastName() + " " + userEntity.getFirstName()),
-                    ObjectUtil.wrapObject("isVerified", userEntity.getIsVerified())));
+                            user.getLastName() + " " + user.getFirstName()),
+                    ObjectUtil.wrapObject("isVerified", user.getIsVerified())));
         }
         return ResponseEntity.notFound().build();
     }

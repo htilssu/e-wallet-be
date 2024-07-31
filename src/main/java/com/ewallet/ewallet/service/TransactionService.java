@@ -3,7 +3,10 @@ package com.ewallet.ewallet.service;
 import com.ewallet.ewallet.dto.mapper.TransactionMapper;
 import com.ewallet.ewallet.dto.mapper.WalletTransactionMapperImpl;
 import com.ewallet.ewallet.dto.response.WalletTransactionDto;
+import com.ewallet.ewallet.models.PaymentRequest;
 import com.ewallet.ewallet.models.Transaction;
+import com.ewallet.ewallet.models.Wallet;
+import com.ewallet.ewallet.payment.request.PaymentRequestRepository;
 import com.ewallet.ewallet.repository.TransactionRepository;
 import com.ewallet.ewallet.repository.WalletTransactionRepository;
 import lombok.AllArgsConstructor;
@@ -19,6 +22,7 @@ public class TransactionService {
     private final WalletTransactionService walletTransactionService;
     private final WalletTransactionRepository walletTransactionRepository;
     private final WalletTransactionMapperImpl walletTransactionMapperImpl;
+    private final PaymentRequestRepository paymentRequestRepository;
 
     @Transactional(readOnly = true)
     public WalletTransactionDto getTransactionDetail(String id) {
@@ -47,5 +51,36 @@ public class TransactionService {
         else {
             throw new RuntimeException("Transaction target not found");
         }
+    }
+
+    public Transaction createTransaction(String userId,
+            PaymentRequest paymentRequest,
+            Wallet sender,
+            Wallet receiver) {
+        final Transaction transaction = createTransaction(userId, paymentRequest);
+
+        if (paymentRequest.getStatus().equals("SUCCESS")) {
+            walletTransactionService.createWalletTransaction(transaction, sender, receiver);
+        }
+
+        paymentRequest.setTransaction(transaction);
+        paymentRequestRepository.save(paymentRequest);
+        return transaction;
+    }
+
+    public Transaction createTransaction(String userId, PaymentRequest paymentRequest) {
+        var transaction = new Transaction();
+        transaction.setSenderId(userId);
+        transaction.setSenderType("user");
+        transaction.setReceiverId(paymentRequest.getPartner().getId());
+        transaction.setReceiverType("partner");
+        transaction.setMoney(paymentRequest.getMoney());
+        transaction.setTransactionTarget("wallet");
+        transaction.setStatus(paymentRequest.getStatus());
+
+        transactionRepository.save(transaction);
+
+
+        return transaction;
     }
 }

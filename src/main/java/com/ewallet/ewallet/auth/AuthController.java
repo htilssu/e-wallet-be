@@ -41,7 +41,7 @@ public class AuthController {
             user = userRepository.findByUserName(authData.getUsername());
         }
         else {
-            user = userRepository.findByEmail(authData.getUsername()).orElse(null);
+            user = userRepository.findByEmail(authData.getUsername());
         }
 
 
@@ -78,9 +78,9 @@ public class AuthController {
                     .body(new ResponseMessage("Vui lòng kiểm tra lại thông tin"));
         }
 
-        Optional<User> existingUser = userRepository.findByEmail(user.getEmail());
+        User existingUser = userRepository.findByEmail(user.getEmail());
 
-        if (existingUser.isPresent()) {
+        if (existingUser != null) {
             return ResponseEntity.ok(new ResponseMessage("Người dùng đã tồn tại"));
         }
         var userCheck = userRepository.findByPhoneNumber(user.getPhoneNumber());

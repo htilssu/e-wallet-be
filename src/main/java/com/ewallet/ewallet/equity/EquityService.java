@@ -25,17 +25,14 @@ public class EquityService {
         var month = today.getMonthValue();
         var year = today.getYear();
 
-        CompletableFuture<Equity> senderEquity = equityRepository.findByUserAndMonthAndYear(
+        Equity senderEquity = equityRepository.findByUserAndMonthAndYear(
                 senderId, month, year);
-        CompletableFuture<Equity> receiverEquity = equityRepository.findByUserAndMonthAndYear(
+        Equity receiverEquity = equityRepository.findByUserAndMonthAndYear(
                 receiverId, month, year);
 
-        senderEquity.thenAccept(equity -> {
-            if (equity == null) {
-                equity = Equity.builder().year(year).month(month).user(senderId).build();
-            }
-            equityRepository.save(equity);
-        });
+        if (senderEquity != null) {
+            senderEquity.getEquityItemList();
+        }
         return null;
     }
 

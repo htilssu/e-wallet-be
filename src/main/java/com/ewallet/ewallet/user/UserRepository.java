@@ -10,7 +10,7 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends CrudRepository<User, String> {
 
-    Optional<User> findByEmail(String email);
+    User findByEmail(String email);
     User findByUserName(String userName);
     @Nullable
     User findByPhoneNumber(String phoneNumber);

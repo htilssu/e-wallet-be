@@ -3,6 +3,7 @@ package com.ewallet.ewallet.service;
 import com.ewallet.ewallet.dto.mapper.WalletTransactionMapper;
 import com.ewallet.ewallet.models.Transaction;
 import com.ewallet.ewallet.models.Wallet;
+import com.ewallet.ewallet.models.WalletTransaction;
 import com.ewallet.ewallet.repository.WalletTransactionRepository;
 import com.ewallet.ewallet.transaction.exception.TransactionNotFoundException;
 import com.ewallet.ewallet.transfer.exceptions.InsufficientBalanceException;
@@ -47,5 +48,18 @@ public class WalletTransactionService {
         receiverWallet.sendMoneyTo(senderWallet,
                 walletTransaction.getTransaction().getMoney().doubleValue());
 
+    }
+
+    public void createWalletTransaction(Transaction transaction) {
+
+    }
+
+    public void createWalletTransaction(Transaction transaction, Wallet sender, Wallet receiver) {
+        WalletTransaction walletTransaction = new WalletTransaction();
+        walletTransaction.setTransaction(transaction);
+        walletTransaction.setSenderWallet(sender);
+        walletTransaction.setReceiverWallet(receiver);
+
+        walletTransactionRepository.save(walletTransaction);
     }
 }
