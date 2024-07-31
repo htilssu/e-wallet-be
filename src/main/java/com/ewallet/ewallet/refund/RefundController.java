@@ -51,14 +51,13 @@ public class RefundController {
         }
 
         if (transactionRequest.getOrderId() != null && transaction == null) {
-            var paymentRequestOptional = paymentRequestRepository.findById(
+            var paymentRequestOptional = paymentRequestRepository.findByOrderId(
                     transactionRequest.getOrderId());
-            if (paymentRequestOptional.isEmpty()) {
+            if (paymentRequestOptional == null) {
                 return ResponseEntity.notFound().build();
             }
 
-            var paymentRequest = paymentRequestOptional.get();
-            transaction = paymentRequest.getTransaction();
+            transaction = paymentRequestOptional.getTransaction();
 
         }
 
