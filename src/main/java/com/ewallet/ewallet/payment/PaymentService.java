@@ -7,6 +7,7 @@ import com.ewallet.ewallet.models.Wallet;
 import com.ewallet.ewallet.service.TransactionService;
 import com.ewallet.ewallet.transfer.exceptions.InsufficientBalanceException;
 import com.ewallet.ewallet.transfer.exceptions.WalletNotFoundException;
+import com.ewallet.ewallet.util.RequestUtil;
 import com.ewallet.ewallet.wallet.WalletRepository;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -47,6 +48,7 @@ public class PaymentService {
 
         paymentRequest.setStatus("SUCCESS");
 
+        RequestUtil.sendRequest(paymentRequest.getSuccessUrl(), "POST");
         return transactionService.createTransaction(userId, paymentRequest,
                 sender, receiver);
     }
