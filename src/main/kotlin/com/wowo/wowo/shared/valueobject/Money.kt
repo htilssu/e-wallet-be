@@ -1,16 +1,13 @@
 package com.wowo.wowo.shared.valueobject
 
-import com.wowo.wowo.shared.domain.ValueObject
-import java.math.BigDecimal
-import java.math.RoundingMode
-import kotlin.jvm.JvmStatic
+import com.wowo.wowo.shared.domain.*
+import java.math.*
 
 /**
  * Value Object representing monetary amount with currency
  */
 data class Money(
-    val amount: BigDecimal,
-    val currency: Currency
+    val amount: BigDecimal, val currency: Currency
 ) : ValueObject {
 
     init {
@@ -34,6 +31,26 @@ data class Money(
     fun isPositive(): Boolean = amount > BigDecimal.ZERO
     fun isNegative(): Boolean = amount < BigDecimal.ZERO
     fun isZero(): Boolean = amount.compareTo(BigDecimal.ZERO) == 0
+
+    operator fun plus(other: Money): Money {
+        require(currency == other.currency) {
+            "Cannot add money with different currencies"
+        }
+
+        return Money(
+            amount.add(other.amount).setScale(2, RoundingMode.HALF_UP), currency
+        )
+    }
+
+    operator fun minus(other: Money): Money {
+        require(currency == other.currency) {
+            "Cannot subtract money with different currencies"
+        }
+
+        return Money(
+            amount.subtract(other.amount).setScale(2, RoundingMode.HALF_UP), currency
+        )
+    }
 
     companion object {
         @JvmStatic

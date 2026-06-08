@@ -1,11 +1,11 @@
 package com.wowo.wowo.contexts.transaction.application.enricher
 
-import com.wowo.wowo.contexts.transaction.application.dto.TransactionDTO
-import com.wowo.wowo.contexts.wallet.domain.valueobject.WalletId
-import com.wowo.wowo.contexts.wallet.infrastructure.persistence.WalletRepositoryAdapter
-import com.wowo.wowo.shared.enrichment.IEnricher
-import org.springframework.stereotype.Component
-import java.util.UUID
+import com.wowo.wowo.contexts.payment.domain.valueobject.*
+import com.wowo.wowo.contexts.payment.infrastructure.persistence.*
+import com.wowo.wowo.contexts.transaction.application.dto.*
+import com.wowo.wowo.shared.enrichment.*
+import org.springframework.stereotype.*
+import java.util.*
 
 @Component
 class TransactionEnricher(val walletRepositoryAdapter: WalletRepositoryAdapter) : IEnricher<TransactionDTO> {

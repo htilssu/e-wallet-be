@@ -6,6 +6,10 @@ import com.wowo.wowo.contexts.transaction.domain.valueobject.TransactionType
 import com.wowo.wowo.shared.exception.EntityNotFoundException
 import com.wowo.wowo.shared.exception.InsufficientBalanceException
 import com.wowo.wowo.shared.valueobject.Money
+import org.springframework.dao.CannotAcquireLockException
+import org.springframework.dao.PessimisticLockingFailureException
+import org.springframework.retry.annotation.Backoff
+import org.springframework.retry.annotation.Retryable
 
 /**
  * Domain Service for Transfer Operations
@@ -20,6 +24,11 @@ class TransferDomainService(
      * @throws EntityNotFoundException if either wallet not found
      * @throws InsufficientBalanceException if source wallet has insufficient balance
      */
+    @Retryable(
+        retryFor = [CannotAcquireLockException::class, PessimisticLockingFailureException::class],
+        maxAttempts = 3,
+        backoff = Backoff(delay = 100, multiplier = 2.0)
+    )
     fun executeTransfer(
         fromWalletId: String, toWalletId: String, amount: Money, description: String?
     ): Transaction {

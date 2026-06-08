@@ -1,8 +1,8 @@
 package com.wowo.wowo.contexts.transaction.infrastructure.acl
 
+import com.wowo.wowo.contexts.payment.domain.repository.*
+import com.wowo.wowo.contexts.payment.domain.valueobject.*
 import com.wowo.wowo.contexts.transaction.domain.acl.*
-import com.wowo.wowo.contexts.wallet.domain.repository.*
-import com.wowo.wowo.contexts.wallet.domain.valueobject.*
 import com.wowo.wowo.shared.domain.*
 import com.wowo.wowo.shared.exception.*
 import com.wowo.wowo.shared.valueobject.*
@@ -42,7 +42,7 @@ class WalletACLAdapter(
         walletRepository.save(fromWallet)
         walletRepository.save(toWallet)
     }
-    
+
     /**
      * Convert wallet's OwnerType to shared domain OwnerType.
      */
